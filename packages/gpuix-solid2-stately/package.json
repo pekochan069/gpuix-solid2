@@ -1,0 +1,59 @@
+{
+  "name": "gpuix-solid2-stately",
+  "version": "0.0.1",
+  "description": "Renderer-neutral Solid 2 state with explicit native platform inputs",
+  "license": "(MIT AND Apache-2.0)",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pekochan069/gpuix-solid2.git",
+    "directory": "packages/gpuix-solid2-stately"
+  },
+  "files": [
+    "dist",
+    "LICENSE",
+    "LICENSES",
+    "NOTICE.txt",
+    "README.md",
+    "PORTING.md"
+  ],
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./shared-types": {
+      "types": "./dist/shared/index.d.ts"
+    },
+    "./native-platform": {
+      "types": "./dist/native-platform.d.ts"
+    },
+    "./*": {
+      "types": "./dist/*.d.ts",
+      "default": "./dist/*.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "build": "bun scripts/build.ts",
+    "prepack": "bun run build",
+    "check-types": "tsc --noEmit -p tsconfig.json",
+    "test": "bun run build && bun test --conditions=browser --conditions=development test",
+    "check:native": "bun run build && bun scripts/check-native.ts"
+  },
+  "dependencies": {
+    "@internationalized/date": "^3.12.4",
+    "@internationalized/number": "^3.6.9",
+    "@internationalized/string": "^3.2.10"
+  },
+  "devDependencies": {
+    "@solid2-aria/stately": "0.0.1",
+    "@solid2-aria/types-shared": "0.0.1",
+    "solid-js": "^2.0.0-rc.17"
+  },
+  "peerDependencies": {
+    "solid-js": "^2.0.0-rc.17"
+  }
+}
