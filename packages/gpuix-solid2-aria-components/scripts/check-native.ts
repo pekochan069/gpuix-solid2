@@ -178,35 +178,37 @@ try {
   );
 
   await Promise.all(
-    ["button", "toggle-button", "checkbox", "utils"].map(async (name) => {
-      const original = await readFile(
-        path.join(root, "src", `${name}.${name === "utils" ? "ts" : "tsx"}`),
-        "utf-8"
-      );
+    ["button", "toggle-button", "checkbox", "radio-group", "utils"].map(
+      async (name) => {
+        const original = await readFile(
+          path.join(root, "src", `${name}.${name === "utils" ? "ts" : "tsx"}`),
+          "utf-8"
+        );
 
-      const [notice = ""] = original.split("\nimport ");
-      assert.ok(
-        notice.includes("Modified for GPUIX"),
-        `Missing GPUIX notice in ${name}`
-      );
-      await Promise.all(
-        ["js", "d.ts"].map(async (extension) => {
-          const emitted = await readFile(
-            path.join(
-              consumer,
-              "node_modules/gpuix-solid2-aria-components/dist",
-              `${name}.${extension}`
-            ),
-            "utf-8"
-          );
+        const [notice = ""] = original.split("\nimport ");
+        assert.ok(
+          notice.includes("Modified for GPUIX"),
+          `Missing GPUIX notice in ${name}`
+        );
+        await Promise.all(
+          ["js", "d.ts"].map(async (extension) => {
+            const emitted = await readFile(
+              path.join(
+                consumer,
+                "node_modules/gpuix-solid2-aria-components/dist",
+                `${name}.${extension}`
+              ),
+              "utf-8"
+            );
 
-          assert.ok(
-            emitted.startsWith(notice),
-            `Missing original notice in ${name}.${extension}`
-          );
-        })
-      );
-    })
+            assert.ok(
+              emitted.startsWith(notice),
+              `Missing original notice in ${name}.${extension}`
+            );
+          })
+        );
+      }
+    )
   );
   console.log(
     `Checked ${modules.length} native declarations without lib.dom and verified packaged license texts.`

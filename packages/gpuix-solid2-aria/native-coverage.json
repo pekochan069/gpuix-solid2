@@ -1,9 +1,4 @@
 {
-  "source": {
-    "repository": "https://github.com/pekochan069/solid2-aria",
-    "commit": "4bb0e1f8c918e63c045c28d995d51dd1cf9a83b1",
-    "package": "packages/solid2-aria"
-  },
   "exports": {
     "Collection": {
       "source": "collections/collection-builder",
@@ -451,11 +446,11 @@
     },
     "createRadio": {
       "source": "radio/create-radio",
-      "status": "deferred"
+      "status": "native-subset"
     },
     "createRadioGroup": {
       "source": "radio/create-radio-group",
-      "status": "deferred"
+      "status": "native-subset"
     },
     "createSearchField": {
       "source": "searchfield/create-search-field",
@@ -887,5 +882,10 @@
     "./virtualizer/virtualizer",
     "./virtualizer/virtualizer-item",
     "./visually-hidden/visually-hidden"
-  ]
+  ],
+  "source": {
+    "commit": "4bb0e1f8c918e63c045c28d995d51dd1cf9a83b1",
+    "package": "packages/solid2-aria",
+    "repository": "https://github.com/pekochan069/solid2-aria"
+  }
 }

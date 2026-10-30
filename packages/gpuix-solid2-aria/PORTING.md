@@ -11,6 +11,7 @@ This stage adds a native API with GPUIX event and element types. It is not a dro
 | Interactions | Press, hover, keyboard, focus, focus ring, outside interaction | Mouse and keyboard only. Enter presses on key-down; Space presses on key-up. Repeats, disabled input, blur cancellation, and owner cleanup are covered. Pointer exit cancels mouse presses; reentry does not restart them. Touch, pen, long press, move, drag sessions, and focus-within are deferred. |
 | Button and toggle | `createButton`, `createToggleButton` | Native `div` surface; no HTML form or link behavior. Uses the application's `ToggleState`. |
 | Checkbox and switch | `createCheckbox`, `createSwitch` | Reactive state, readonly and disabled guards, Space activation, semantic props. Native accessibility state support remains blocked below. |
+| Radio | `createRadioGroup`, `createRadio` | State-backed selection, Space and mouse activation, one group Tab stop, wrapping arrow navigation in native tree order, disabled skipping, and horizontal RTL. Readonly groups allow focus navigation while keeping selection. No form, label relationship, or focus-within adapter. |
 | Text field | `createTextField` | Controlled and uncontrolled strings, editor change and submit, readonly and disabled edits. No HTML form validation or password input. Controlled change requests preserve the external Solid value; the backend does not roll back native edits when the parent rejects an edit without changing its value prop. |
 | Focus | `createFocusScope`, `createFocusManager` | Native Tab traversal, containment, and restoration for mounted native subtrees. Browser FocusScope components and portals are deferred. |
 | Selection and listbox | `ListKeyboardDelegate`, `createListBox`, `createOption` | Linear navigation, disabled keys, single and multiple selection, roving native focus, single-character search. No spatial grid or multi-character typeahead. |
@@ -24,7 +25,7 @@ Fresh native modules use the source API as a design reference. The filter implem
 
 | Modules still deferred | Required next work |
 | --- | --- |
-| Radio and checkbox groups, toggle groups, search and number fields, select, combobox, autocomplete | Compose native fields and collection behavior with state; implement group focus, validation, and trigger relationships. |
+| Checkbox groups, toggle groups, search and number fields, select, combobox, autocomplete | Compose native fields and collection behavior with state; implement group focus, validation, and trigger relationships. |
 | Menu, submenu, tabs, toolbar, disclosure, breadcrumbs, link, separator, meter, progress | Add widget adapters and test their keyboard contracts. Native state for many of these is already available in `gpuix-solid2-stately`. |
 | Calendar, date and time fields, date picker, color, slider | Native segmented editing, pointer gestures, geometry, and accessible numeric actions and values. |
 | Gridlist, grid, table, tree, virtualizer | Spatial keyboard delegates, measured layouts, row and cell relationships, virtual accessibility nodes, and collection focus across reuse. |
@@ -58,3 +59,11 @@ The missing mappings require changes in the shared GPUIX JS host, native Rust ba
 `bun run check:native` runs a compiled Bun consumer from packed production dependencies without browser globals or a web renderer. It checks every native declaration without `lib.dom` and verifies packaged attribution.
 
 `bun run test:native` passed against a real Linux GPUI window under Xvfb and Mesa software Vulkan. It exercised native hit testing, measured layout, mouse and keyboard activation, disabled Tab traversal, editor changes, hover, nested Escape and outside dismissal, modal Tab containment with a nonmodal child, restoration, and native scrolling. Native simulation requires explicit key-up calls; `simulateKeystrokes` emits key-downs. The live AT-SPI audit in [docs/native-accessibility.json](docs/native-accessibility.json) verifies names, roles, actions, and the remaining backend gaps. Linux's published binary has no test-support renderer, so this proof uses its production graphical renderer. The [captured window](docs/native-verification.png) shows the checked control, edited field, and scrolled target after the OS action audit.
+
+## RadioGroup stage
+
+`createRadioGroup(props, state, ref)` registers one native group per `RadioGroupState`. Call it before creating its radios. Spread `radioGroupProps` onto the containing native `div`; all option refs must point to descendants of that container. `createRadio({ value, ...props }, state, ref)` returns `inputProps`, `isSelected`, `isDisabled`, and `isPressed`. Each value identifies one option and must be unique within the group. Radios register after mounting and unregister on owner disposal.
+
+The selected enabled option is the sole Tab stop. If it is absent or disabled, the last focused enabled option or first registered enabled option becomes the Tab stop. An empty or fully disabled group has no Tab stop. Left, Right, Up, and Down wrap and skip disabled options. Horizontal Left and Right follow the locale direction; Up and Down keep their order. Enter does not select. Mouse and Space request selection through state, including controlled parents that reject requests.
+
+[RadioGroup OS results](../gpuix-solid2-aria-components/docs/radio-accessibility.json) verify radio roles, direct names and descriptions, and Click actions in the native component fixture. GPUIX maps the group to an AT-SPI panel, omits checked and disabled state, and supplies no radio relationships. These backend gaps keep issue #2 open.
