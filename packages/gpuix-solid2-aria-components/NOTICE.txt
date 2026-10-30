@@ -1,0 +1,26 @@
+GPUIX Solid 2 Aria components
+============================
+
+Source API and derived component composition:
+https://github.com/pekochan069/solid2-aria
+Revision: 4bb0e1f8c918e63c045c28d995d51dd1cf9a83b1
+Files: packages/solid2-aria-components/src/{button,toggle-button,checkbox,utils}.tsx
+
+These files derive from Adobe React Spectrum:
+packages/react-aria-components/src/{Button,ToggleButton,Checkbox,utils}.tsx
+Copyright 2022 Adobe. All rights reserved.
+Reference revision: 261344335e54265b2d02dc57a43b911a718de707
+License: Apache License, Version 2.0 (LICENSES/Apache-2.0.txt).
+
+Original source notices and Solid Aria modification notices are retained.
+GPUIX changes replace web JSX, DOM refs, CSS styles, hidden inputs, and browser
+events with native host elements, callback refs, style objects, and the native
+behavior and state packages. Context slots, callback composition, and reactive
+render props are adapted to this native subset. Browser forms, group controls,
+class props, DOM render overrides, and live announcements are not ported.
+
+The pinned Solid Aria repository NOTICE.txt and original React Spectrum NOTICE.txt
+are reproduced verbatim in LICENSES/solid2-aria-NOTICE.txt and
+LICENSES/react-spectrum-NOTICE.txt. They also describe material not in this package.
+LICENSE covers independent contributions and does not replace Apache-2.0 terms.
+Tests, fixtures, tooling, inventory, and the export barrel are independently authored.

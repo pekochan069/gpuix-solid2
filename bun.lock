@@ -48,7 +48,24 @@
       },
       "peerDependencies": {
         "@gpuix/native": "0.11.0",
-        "gpuix-solid2": "workspace:*",
+        "gpuix-solid2": "^0.0.1",
+        "solid-js": "^2.0.0-rc.17",
+      },
+    },
+    "packages/gpuix-solid2-aria-components": {
+      "name": "gpuix-solid2-aria-components",
+      "version": "0.0.1",
+      "dependencies": {
+        "gpuix-solid2-aria": "workspace:*",
+        "gpuix-solid2-stately": "workspace:*",
+      },
+      "devDependencies": {
+        "@solidjs/compiler": "^2.0.0-rc.17",
+        "tsdown": "^0.23.4",
+      },
+      "peerDependencies": {
+        "@gpuix/native": "0.11.0",
+        "gpuix-solid2": "^0.0.1",
         "solid-js": "^2.0.0-rc.17",
       },
     },
@@ -526,6 +543,8 @@
     "gpuix-solid2": ["gpuix-solid2@workspace:packages/gpuix-solid2"],
 
     "gpuix-solid2-aria": ["gpuix-solid2-aria@workspace:packages/gpuix-solid2-aria"],
+
+    "gpuix-solid2-aria-components": ["gpuix-solid2-aria-components@workspace:packages/gpuix-solid2-aria-components"],
 
     "gpuix-solid2-stately": ["gpuix-solid2-stately@workspace:packages/gpuix-solid2-stately"],
 

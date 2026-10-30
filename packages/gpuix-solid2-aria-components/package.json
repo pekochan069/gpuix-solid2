@@ -1,0 +1,63 @@
+{
+  "name": "gpuix-solid2-aria-components",
+  "version": "0.0.1",
+  "description": "Native Solid 2 Aria components for GPUIX",
+  "license": "(MIT AND Apache-2.0)",
+  "files": [
+    "dist",
+    "LICENSE",
+    "LICENSES",
+    "NOTICE.txt",
+    "README.md",
+    "PORTING.md",
+    "native-coverage.json",
+    "docs"
+  ],
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./button": {
+      "types": "./dist/button.d.ts",
+      "default": "./dist/button.js"
+    },
+    "./toggle-button": {
+      "types": "./dist/toggle-button.d.ts",
+      "default": "./dist/toggle-button.js"
+    },
+    "./checkbox": {
+      "types": "./dist/checkbox.d.ts",
+      "default": "./dist/checkbox.js"
+    },
+    "./utils": {
+      "types": "./dist/utils.d.ts",
+      "default": "./dist/utils.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "check-types": "tsrs --noEmit",
+    "test": "bun test --preload gpuix-solid2/preload test",
+    "check:native": "bun run build && bun scripts/check-native.ts",
+    "test:native": "bun --preload gpuix-solid2/preload fixtures/native.tsx",
+    "prepack": "bun run build"
+  },
+  "dependencies": {
+    "gpuix-solid2-aria": "workspace:*",
+    "gpuix-solid2-stately": "workspace:*"
+  },
+  "devDependencies": {
+    "@solidjs/compiler": "^2.0.0-rc.17",
+    "tsdown": "^0.23.4"
+  },
+  "peerDependencies": {
+    "@gpuix/native": "0.11.0",
+    "gpuix-solid2": "^0.0.1",
+    "solid-js": "^2.0.0-rc.17"
+  }
+}
