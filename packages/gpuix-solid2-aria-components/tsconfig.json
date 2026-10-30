@@ -1,0 +1,5 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": { "jsxImportSource": "gpuix-solid2" },
+  "include": ["src", "test", "scripts", "fixtures", "tsdown.config.ts"]
+}
