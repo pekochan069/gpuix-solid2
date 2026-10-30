@@ -81,11 +81,16 @@ const runtime = createRenderer<HostNode | HostParent>({
 
 export const universalRender = (
   code: () => Element,
-  root: HostParent
+  root: HostParent,
+  onMouseDown?: () => void
 ): (() => void) =>
   runWithOwner(null, () =>
     runtime.render(() => {
       const container = createHostElement("div");
+
+      if (onMouseDown) {
+        setHostProperty(container, "onMouseDown", onMouseDown);
+      }
 
       setHostProperty(container, "style", {
         display: "flex",

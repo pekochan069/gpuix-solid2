@@ -23,6 +23,8 @@ import { universalRender } from "./universal.js";
 export interface GpuixContextValue {
   flushMutations: () => void;
   renderer: NativeRenderer;
+  getInteractionModality: () => "keyboard" | "pointer" | null;
+  subscribeEvents: (callback: (event: EventPayload) => void) => () => void;
   subscribeSelection: (callback: (text: string | null) => void) => () => void;
 }
 
@@ -85,6 +87,16 @@ export const createRoot = (
   let dispose: (() => void) | undefined;
 
   const selectionListeners = new Set<(text: string | null) => void>();
+  const eventListeners = new Set<(event: EventPayload) => void>();
+  let interactionModality: "keyboard" | "pointer" | null = null;
+
+  const updateInteractionModality = (event: EventPayload) => {
+    if (event.eventType === "keyDown" || event.eventType === "windowKeyDown") {
+      interactionModality = "keyboard";
+    } else if (event.eventType === "mouseDown") {
+      interactionModality = "pointer";
+    }
+  };
 
   const onSelectionChange = (
     event: EventPayload,
@@ -112,7 +124,15 @@ export const createRoot = (
   const attach = () => {
     binding = state.attach({
       eventHandlers,
-      onEvent: rootHandlers.onEvent,
+      onEvent(event) {
+        updateInteractionModality(event);
+
+        rootHandlers.onEvent?.(event);
+
+        for (const listener of eventListeners) {
+          listener(event);
+        }
+      },
       onSelectionChange,
       onWindowKeyDown: rootHandlers.onKeyDown,
       onWindowKeyUp: rootHandlers.onKeyUp,
@@ -172,6 +192,8 @@ export const createRoot = (
 
   return {
     dispatch(event) {
+      updateInteractionModality(event);
+
       try {
         return state.dispatch(event);
       } finally {
@@ -209,7 +231,13 @@ export const createRoot = (
               flushMutations() {
                 mutations.flushMutations();
               },
+              getInteractionModality: () => interactionModality,
               renderer,
+              subscribeEvents(listener) {
+                eventListeners.add(listener);
+
+                return () => eventListeners.delete(listener);
+              },
               subscribeSelection(listener) {
                 selectionListeners.add(listener);
 
@@ -225,7 +253,10 @@ export const createRoot = (
               },
             },
           }),
-        container
+        container,
+        () => {
+          interactionModality = "pointer";
+        }
       );
 
       flush();

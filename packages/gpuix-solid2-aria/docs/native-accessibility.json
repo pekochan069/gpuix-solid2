@@ -1,0 +1,14 @@
+{
+  "platform": "Linux X11, Xvfb, Mesa software Vulkan, GPUIX 0.11.0, AT-SPI",
+  "roles_and_names": {
+    "Save": 43,
+    "Accept terms": 7,
+    "Disabled": 43,
+    "Name": 79
+  },
+  "click_action_updates_solid_state": true,
+  "checkbox_click_toggles_solid_state": true,
+  "checkbox_checked_state_exposed": false,
+  "disabled_reported_enabled": true,
+  "checkbox_relationships": []
+}

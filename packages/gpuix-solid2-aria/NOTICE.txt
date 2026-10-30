@@ -1,0 +1,23 @@
+GPUIX Solid 2 Aria
+=================
+
+Copyright (c) 2026 pekochan069. Original native behavior implementations
+and tooling are MIT licensed. This package implements a native subset of
+the API exposed by https://github.com/pekochan069/solid2-aria, revision
+4bb0e1f8c918e63c045c28d995d51dd1cf9a83b1, packages/solid2-aria.
+
+src/filter.ts derives from packages/solid2-aria/src/i18n/create-filter.ts,
+itself derived from Adobe React Spectrum
+packages/react-aria/src/i18n/useFilter.ts (Copyright 2020 Adobe).
+Modifications for GPUIX: use native locale provisioning, native module
+paths, and repository formatting. Original copyright and derivation
+notices remain in the file. See LICENSES/Apache-2.0.txt.
+
+The upstream notice and original React Spectrum notice are preserved
+verbatim in LICENSES/solid2-aria-NOTICE.txt and
+LICENSES/react-spectrum-NOTICE.txt. The MIT text is in LICENSE.
+
+Native state algorithms come from gpuix-solid2-stately. This package does
+not consume @solid2-aria/core or @solidjs/web, or install DOM polyfills.
+Native accessibility limitations and deferred exports are documented in
+PORTING.md and native-coverage.json.
