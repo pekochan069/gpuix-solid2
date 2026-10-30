@@ -1,0 +1,25 @@
+{
+  "platform": "Linux X11, Xvfb, Mesa software Vulkan, GPUIX 0.11.0, AT-SPI",
+  "roles_and_names": {
+    "Shipping": 39,
+    "Standard": 44,
+    "Express": 44,
+    "Unavailable": 44,
+    "Readonly plan": 39,
+    "Fixed": 44,
+    "Other": 44
+  },
+  "radio_click_updates_controlled_solid_state": true,
+  "disabled_click_preserves_selection": true,
+  "readonly_click_preserves_selection": true,
+  "selected_radio_checked_state_exposed": false,
+  "disabled_reported_enabled": true,
+  "native_states": {
+    "Standard": [1124075776, 0],
+    "Express": [1124075776, 0],
+    "Unavailable": [1124075776, 0],
+    "Fixed": [1124075776, 0],
+    "Other": [1124079872, 0]
+  },
+  "radio_relationships": []
+}

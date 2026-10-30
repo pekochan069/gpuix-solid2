@@ -11,6 +11,7 @@ This package compiles native JSX with the GPUIX renderer and uses `gpuix-solid2-
 | `Button`, `ButtonContext` | Mouse, Enter on key-down, Space on key-up, focus, focus visibility, hover, reactive disabled state, and autofocus. `isPending` blocks activation and hover while preserving the Tab stop and focus callbacks. Pending announcements and progress-bar composition are deferred. |
 | `ToggleButton`, `ToggleButtonContext` | The same native interactions, plus controlled `isSelected`, initial `defaultSelected`, `onChange`, readonly state, and `state` in render callbacks. Toggle groups and selection-indicator composition are deferred. |
 | `Checkbox`, `CheckboxContext` | Mouse and Space activation, controlled and uncontrolled selection, focus, hover, readonly and disabled guards, and render-state flags for required, invalid, and indeterminate values. Enter does not toggle. `ref` and `inputRef` attach to the same native element. Checkbox groups, field/button composition, and browser validation are deferred. |
+| `RadioGroup`, `Radio`, `RadioGroupContext`, `RadioContext`, `RadioGroupStateContext` | Controlled `value`, initial `defaultValue`, string `onChange`, one group Tab stop, native arrow wrapping and disabled skipping, horizontal RTL, mouse and Space selection. Group readonly and disabled state apply to every option. Context slots, native refs, style and children callbacks are supported. Split `RadioField` and `RadioButton`, label and field-error composition, focus-within callbacks, and browser forms are deferred. |
 | `DEFAULT_SLOT`, `createContextProps`, `createRenderProps` | Context defaults, named slots, callback and ref composition, and reactive children and style callbacks. Slots are selected at mount. Style callbacks receive `defaultStyle: {}` and children callbacks receive `defaultChildren: undefined`. CSS classes, web render overrides, DOM refs, and hidden collection traversal are excluded. |
 
 Components expose native behavior callbacks such as `onPress`, `onFocus`, and `onHoverChange`. They do not expose browser event objects or arbitrary DOM props. Local props override contextual defaults; supported callbacks chain instead of replacing each other. A render callback can return native JSX or text and read reactive state through property getters.
@@ -40,7 +41,7 @@ The first component group remains an accessibility subset. Issues [#2](https://g
 | Components and infrastructure | Required native work |
 | --- | --- |
 | TextField, TextArea, SearchField, NumberField | Native editor integration, controlled edit rollback, field composition, validation, and accessible values. |
-| RadioGroup, CheckboxGroup, ToggleButtonGroup, Tabs, Toolbar | Group state and focus, keyboard delegates, selection relationships, and checked or selected accessibility state. |
+| CheckboxGroup, ToggleButtonGroup, Tabs, Toolbar | Group state and focus, keyboard delegates, selection relationships, and checked or selected accessibility state. |
 | ListBox, Select, ComboBox, Menu, Autocomplete | Descriptor evaluation without native hidden nodes, collection registration and disposal, keyboard navigation, and trigger relationships. |
 | Dialog, Modal, Popover, Tooltip, Sheet | Component composition over native overlays, focus restoration, anchoring, modal accessibility exclusion, and descriptions. |
 | Calendar, date and time, color, slider controls | Segmented editing, pointer gestures, geometry, numeric values, and native accessibility actions. |
@@ -50,3 +51,15 @@ The first component group remains an accessibility subset. Issues [#2](https://g
 The inventory lists every remaining source runtime export individually. Dynamic collection component tests and descriptor evaluation belong to the collection stage. No visible native placeholder nodes are created for deferred components.
 
 Original Adobe source notices, Solid Aria modification notices, and the new GPUIX modification notices appear in both runtime output and declarations. Complete pinned notices and license texts ship with the package. See [NOTICE.txt](NOTICE.txt).
+
+## RadioGroup verification
+
+[The radio fixture](fixtures/radio-native.tsx) passed in a real GPUI window under Xvfb and Mesa software Vulkan. It verifies mouse and Space selection, controlled updates, disabled skipping, arrow wrapping, focus visibility, one Tab stop, Shift Tab entry, and readonly guards. Package tests also cover rejected controlled requests, defaults, context slots and callback composition, option removal, native child reordering, and horizontal RTL.
+
+[Observed RadioGroup accessibility](docs/radio-accessibility.json) and the [native window](docs/radio-verification.png) record fresh OS checks. AT-SPI exposes Standard, Express, Unavailable, Fixed, and Other as radio buttons. Click on Express updates controlled Solid state and the direct group description. Disabled and readonly Click actions preserve selection. The backend reports Shipping and Readonly plan as panels rather than radio groups, omits checked state on Express, reports Unavailable as enabled, and exposes no radio relationships. No component prop can repair these backend mappings.
+
+Radio values must be unique within a group. The group renders a non-focusable native container; each Radio renders one focusable native `div`. `ref` and `inputRef` on a Radio attach to that same element. Group and radio contexts compose defaults and callbacks using the existing slot rules. `RadioGroupStateContext` exposes the owning group's state and requires a provider.
+
+Controlled `value={null}` clears selection. A rejected `onChange` request retains the parent's value. `defaultValue` initializes uncontrolled state once. If the selected option is disabled or removed, the last focused enabled option or first registered enabled option becomes the group's Tab stop. Clearing selection retains the last focused enabled option. Readonly arrow navigation moves focus without changing selection.
+
+This stage keeps issues #2 and #3 open. Tabs is the next component candidate; TextField still needs controlled editor rollback in the shared backend. No external repository was changed and no package was published.

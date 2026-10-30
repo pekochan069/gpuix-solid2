@@ -8,6 +8,7 @@ import {
   DEFAULT_SLOT,
 } from "gpuix-solid2-aria-components";
 import { Checkbox } from "gpuix-solid2-aria-components/checkbox";
+import { Radio, RadioGroup } from "gpuix-solid2-aria-components/radio-group";
 import { ToggleButton } from "gpuix-solid2-aria-components/toggle-button";
 import { createSignal } from "solid-js";
 
@@ -19,6 +20,8 @@ const root = createRoot({ applyBatch: () => [] });
 let button!: HostElement;
 let toggle!: HostElement;
 let checkbox!: HostElement;
+let radio!: HostElement;
+let radioValue = () => "";
 let presses = 0;
 let selected = () => false;
 let checked = () => false;
@@ -30,6 +33,24 @@ try {
 
     return (
       <div>
+        <RadioGroup defaultValue="standard" aria-label="Shipping">
+          {(state) => {
+            radioValue = () => state.state.selectedValue ?? "";
+
+            return (
+              <>
+                <Radio value="standard" aria-label="Standard" />
+                <Radio
+                  value="express"
+                  aria-label="Express"
+                  ref={(node) => {
+                    radio = node;
+                  }}
+                />
+              </>
+            );
+          }}
+        </RadioGroup>
         <ButtonContext
           value={{ slots: { [DEFAULT_SLOT]: { "aria-label": "Save" } } }}
         >
@@ -78,6 +99,10 @@ try {
     root.flush();
   }
 
+  root.dispatch({ elementId: radio.id, eventType: "click" });
+  assert.equal(radioValue(), "express");
+  assert.equal(radio.props.get("role"), "radio");
+  assert.equal(radio.props.get("tabIndex"), 0);
   assert.equal(presses, 1);
   assert.equal(selected(), true);
   assert.equal(checked(), true);

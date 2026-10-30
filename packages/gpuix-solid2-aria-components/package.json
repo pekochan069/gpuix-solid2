@@ -37,7 +37,11 @@
       "types": "./dist/utils.d.ts",
       "default": "./dist/utils.js"
     },
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./radio-group": {
+      "types": "./dist/radio-group.d.ts",
+      "default": "./dist/radio-group.js"
+    }
   },
   "scripts": {
     "build": "tsdown",
@@ -45,7 +49,8 @@
     "test": "bun test --preload gpuix-solid2/preload test",
     "check:native": "bun run build && bun scripts/check-native.ts",
     "test:native": "bun --preload gpuix-solid2/preload fixtures/native.tsx",
-    "prepack": "bun run build"
+    "prepack": "bun run build",
+    "test:native:radio": "bun --preload gpuix-solid2/preload fixtures/radio-native.tsx"
   },
   "dependencies": {
     "gpuix-solid2-aria": "workspace:*",

@@ -1,6 +1,6 @@
 # gpuix-solid2-aria
 
-Native interaction behaviors for the Solid 2 GPUIX renderer. This is the first behavior stage of [issue #2](https://github.com/pekochan069/gpuix-solid2/issues/2). It covers buttons, toggles, checkboxes, switches, text fields, linear listboxes, focus, and overlay foundations. It does not provide full `@solid2-aria/core` parity or complete native accessibility. See [coverage and platform gaps](PORTING.md).
+Native interaction behaviors for the Solid 2 GPUIX renderer. This is the native behavior subset of [issue #2](https://github.com/pekochan069/gpuix-solid2/issues/2). It covers buttons, toggles, checkboxes, switches, radio groups, text fields, linear listboxes, focus, and overlay foundations. It does not provide full `@solid2-aria/core` parity or complete native accessibility. See [coverage and platform gaps](PORTING.md).
 
 ## Render a native checkbox
 
@@ -45,6 +45,12 @@ Set `jsxImportSource` to `gpuix-solid2`. Use a native `div` for a checkbox surfa
 Behavior props use reactive property getters. Keep the returned object intact; destructuring a state getter takes a snapshot. Compose callbacks explicitly when behaviors handle the same event. Solid's `merge` overwrites a duplicate handler; it does not chain handlers.
 
 `createButton`, `createToggleButton`, `createCheckbox`, `createSwitch`, and `createPress` take a `() => HostElement | null` ref. `createToggleButton`, `createCheckbox`, and `createSwitch` also take `ToggleState` from `gpuix-solid2-stately`. `createTextField` returns native editor `inputProps` and `value`. Controlled inputs report change requests. Rejected edits require a native editor reset contract that GPUIX 0.11.0 does not expose; see the porting audit before using this pattern for input validation.
+
+## Radio groups
+
+Call `createRadioGroup(props, state, ref)` before `createRadio(props, state, ref)` for each option. Both use the same `RadioGroupState` from `gpuix-solid2-stately`. Spread `radioGroupProps` onto the containing native `div` and each radio's `inputProps` onto a native descendant. Radio values must be unique within the group. Mounted options register and dispose with their owners.
+
+Selection, disabled and readonly guards, one Tab stop, wrapping arrow navigation, and horizontal RTL are supported. The [RadioGroup contract](PORTING.md#radiogroup-stage) defines fallback focus and remaining native accessibility gaps. Applications can use `RadioGroup` and `Radio` from `gpuix-solid2-aria-components` for component composition.
 
 ## Focus, collections, and overlays
 

@@ -13,7 +13,7 @@
  * Derived from Adobe React Spectrum: packages/react-aria-components/src/utils.tsx.
  * Modified for Solid Aria: adapted components, contexts, refs, and reactive properties for Solid 2; uses Solid class props.
  * Licensed under Apache-2.0. See LICENSES/Apache-2.0.txt and NOTICE.txt at the repository root.
- * Modified for GPUIX: native host refs, styles, interactions, and rendering; browser and group integrations omitted. See NOTICE.txt.
+ * Modified for GPUIX: native host refs, styles, interactions, and rendering; browser form integrations omitted. See NOTICE.txt.
  */
 
 import type { HostElement, StyleDesc } from "gpuix-solid2";
@@ -39,13 +39,14 @@ export type ContextValue<Props> =
   | { slots: Record<string | symbol, Props> }
   | null;
 
-export interface NativeOptions extends AriaButtonProps, HoverProps {
+export interface NativeOptions<Change = boolean>
+  extends AriaButtonProps, HoverProps {
   id?: string;
   ref?: Ref;
   inputRef?: Ref;
   slot?: string | null | false;
   autoFocus?: boolean;
-  onChange?: (selected: boolean) => void;
+  onChange?: (value: Change) => void;
 }
 
 export interface RenderProps<State> {
@@ -57,8 +58,8 @@ export interface RenderProps<State> {
     | ((values: State & { defaultStyle: StyleDesc }) => StyleDesc | undefined);
 }
 
-type ChainedEvents = Pick<
-  NativeOptions,
+type ChainedEvents<Change> = Pick<
+  NativeOptions<Change>,
   | "onPress"
   | "onPressStart"
   | "onPressEnd"
@@ -73,8 +74,8 @@ type ChainedEvents = Pick<
   | "onChange"
 >;
 
-interface ContextPropsResult<Props> {
-  props: Merge<[() => Props, Props, ChainedEvents]>;
+interface ContextPropsResult<Props, Change> {
+  props: Merge<[() => Props, Props, ChainedEvents<Change>]>;
   ref: () => HostElement | null;
   setRef: (node: HostElement) => void;
 }
@@ -84,10 +85,14 @@ interface ResolvedRenderProps {
   readonly style: StyleDesc | undefined;
 }
 
-export const createContextProps = <Props extends NativeOptions>(
+export const createContextProps = <
+  Props extends NativeOptions<Change>,
+  Change = boolean,
+>(
   input: Props,
-  context: Context<ContextValue<Props>>
-): ContextPropsResult<Props> => {
+  context: Context<ContextValue<Props>>,
+  isDisabled?: () => boolean
+): ContextPropsResult<Props, Change> => {
   const value = useContext(context);
   const slot = untrack(() => input.slot);
 
@@ -112,12 +117,12 @@ export const createContextProps = <Props extends NativeOptions>(
     return value;
   };
 
-  const events: ChainedEvents = {
+  const events: ChainedEvents<Change> = {
     onBlur(event: Parameters<NonNullable<AriaButtonProps["onBlur"]>>[0]) {
       defaults()?.onBlur?.(event);
       input.onBlur?.(event);
     },
-    onChange(selected: boolean) {
+    onChange(selected: Change) {
       defaults()?.onChange?.(selected);
       input.onChange?.(selected);
     },
@@ -175,7 +180,11 @@ export const createContextProps = <Props extends NativeOptions>(
   const services = createNativeServices();
   const ref = () => element;
   onSettled(() => {
-    if (props.autoFocus === true && !(props.isDisabled === true)) {
+    if (
+      props.autoFocus === true &&
+      !(props.isDisabled === true) &&
+      !(isDisabled?.() === true)
+    ) {
       services.focus(ref);
     }
 
@@ -248,6 +257,10 @@ export const createSurfaceProps = (
     onBlur(event: Parameters<NonNullable<NativeControlProps["onBlur"]>>[0]) {
       behavior.onBlur?.(event);
       focus.focusProps.onBlur?.(event);
+    },
+    onFocus(event: Parameters<NonNullable<NativeControlProps["onFocus"]>>[0]) {
+      behavior.onFocus?.(event);
+      focus.focusProps.onFocus?.(event);
     },
     onMouseLeave(
       event: Parameters<NonNullable<NativeControlProps["onMouseLeave"]>>[0]

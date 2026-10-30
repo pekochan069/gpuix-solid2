@@ -20,3 +20,18 @@ export {
 } from "./utils.js";
 
 export type { ContextValue, Ref, RenderProps } from "./utils.js";
+
+export {
+  RadioGroup,
+  Radio,
+  RadioGroupContext,
+  RadioContext,
+  RadioGroupStateContext,
+} from "./radio-group.js";
+
+export type {
+  RadioGroupProps,
+  RadioProps,
+  RadioGroupRenderProps,
+  RadioRenderProps,
+} from "./radio-group.js";

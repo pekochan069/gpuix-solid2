@@ -614,11 +614,11 @@
     },
     "RadioGroup": {
       "source": "radio-group",
-      "status": "deferred"
+      "status": "native-subset"
     },
     "Radio": {
       "source": "radio-group",
-      "status": "deferred"
+      "status": "native-subset"
     },
     "RadioField": {
       "source": "radio-group",
@@ -630,11 +630,11 @@
     },
     "RadioGroupContext": {
       "source": "radio-group",
-      "status": "deferred"
+      "status": "native-subset"
     },
     "RadioContext": {
       "source": "radio-group",
-      "status": "deferred"
+      "status": "native-subset"
     },
     "RadioFieldContext": {
       "source": "radio-group",
@@ -642,7 +642,7 @@
     },
     "RadioGroupStateContext": {
       "source": "radio-group",
-      "status": "deferred"
+      "status": "native-subset"
     },
     "SearchField": {
       "source": "search-field",
