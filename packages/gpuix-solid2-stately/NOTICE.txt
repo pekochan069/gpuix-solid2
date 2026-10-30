@@ -1,0 +1,21 @@
+GPUIX Solid 2 Stately
+====================
+
+The build derives its state implementations from @solid2-aria/stately 0.0.1
+and its shared declarations from @solid2-aria/types-shared 0.0.1, published
+from https://github.com/pekochan069/solid2-aria. Source was audited against
+revision 4bb0e1f8c918e63c045c28d995d51dd1cf9a83b1, packages/solid2-stately
+and packages/@solid2-aria/types-shared.
+
+Copyright (c) 2026 pekochan069. Solid2 Aria contributions are MIT licensed.
+Adobe React Spectrum derived files retain their original copyright years,
+source paths, and Apache-2.0 notices. Original license texts and notices are
+preserved in LICENSE, LICENSES/Apache-2.0.txt,
+LICENSES/react-spectrum-NOTICE.txt, and LICENSES/solid2-aria-NOTICE.txt.
+
+Modifications for GPUIX: explicit date validation locale, explicit native
+virtualizer size inputs, and renderer-neutral native event, target, file,
+and validation declarations. The deterministic build records adaptations
+in dist/native-audit.json and marks modified files. Other state algorithms
+and translation data are reused without changes. Solid's client runtime
+remains an external peer dependency.

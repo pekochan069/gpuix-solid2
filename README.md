@@ -1,5 +1,10 @@
 # gpuix-solid2
 
+Native Solid 2 packages:
+
+- [gpuix-solid2](packages/gpuix-solid2/README.md): GPUIX renderer and controls.
+- [gpuix-solid2-stately](packages/gpuix-solid2-stately/README.md): renderer-neutral state with native locale, geometry, and type contracts. See its [module audit](packages/gpuix-solid2-stately/PORTING.md).
+
 To install dependencies:
 
 ```bash

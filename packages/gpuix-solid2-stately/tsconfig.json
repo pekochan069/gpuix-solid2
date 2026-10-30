@@ -1,0 +1,5 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": { "skipLibCheck": false },
+  "include": ["scripts/**/*.ts", "test/**/*.ts", "src/**/*.ts"]
+}
