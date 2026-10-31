@@ -1,0 +1,19 @@
+{
+  "platform": "Linux WSLg X11, GPUIX 0.11.0, AT-SPI",
+  "roles_and_names": {
+    "Topics": 39,
+    "News": 7,
+    "Offers": 7,
+    "Unavailable": 7
+  },
+  "checkbox_click_updates_controlled_solid_state": true,
+  "disabled_click_preserves_selection": true,
+  "checked_state_exposed": false,
+  "disabled_reported_enabled": true,
+  "native_states": {
+    "News": [1124079872, 0],
+    "Offers": [1124075776, 0],
+    "Unavailable": [1124075776, 0]
+  },
+  "checkbox_relationships": []
+}

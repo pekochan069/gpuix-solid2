@@ -13,6 +13,14 @@ Modifications for GPUIX: use native locale provisioning, native module
 paths, and repository formatting. Original copyright and derivation
 notices remain in the file. See LICENSES/Apache-2.0.txt.
 
+src/checkbox-group.ts adapts the native behavior of Solid Aria's
+checkbox/create-checkbox-group.ts and create-checkbox-group-item.ts,
+derived from Adobe React Spectrum's useCheckboxGroup.ts and
+useCheckboxGroupItem.ts (Copyright 2020 Adobe). Modifications for GPUIX:
+native host props and events, explicit state, and no DOM fields or forms.
+Original copyright and derivation notices ship in source, JavaScript,
+and declarations. See LICENSES/Apache-2.0.txt.
+
 The upstream notice and original React Spectrum notice are preserved
 verbatim in LICENSES/solid2-aria-NOTICE.txt and
 LICENSES/react-spectrum-NOTICE.txt. The MIT text is in LICENSE.

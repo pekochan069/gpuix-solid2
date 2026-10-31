@@ -145,24 +145,30 @@ try {
     })
   );
 
-  const filterSource = await readFile(
-    path.join(root, "src/filter.ts"),
-    "utf-8"
-  );
-
-  const [notice = ""] = filterSource.split("\nimport ");
-
   await Promise.all(
-    ["filter.js", "filter.d.ts"].map(async (file) => {
-      const emitted = await readFile(
-        path.join(consumer, "node_modules/gpuix-solid2-aria/dist", file),
+    ["filter", "checkbox-group"].map(async (name) => {
+      const original = await readFile(
+        path.join(root, `src/${name}.ts`),
         "utf-8"
       );
 
+      const [notice = ""] = original.split("\nimport ");
       assert.ok(notice.includes("Copyright 2020 Adobe"));
-      assert.ok(
-        emitted.startsWith(notice),
-        `Missing original notice in ${file}`
+
+      await Promise.all(
+        ["js", "d.ts"].map(async (extension) => {
+          const file = `${name}.${extension}`;
+
+          const emitted = await readFile(
+            path.join(consumer, "node_modules/gpuix-solid2-aria/dist", file),
+            "utf-8"
+          );
+
+          assert.ok(
+            emitted.startsWith(notice),
+            `Missing original notice in ${file}`
+          );
+        })
       );
     })
   );
