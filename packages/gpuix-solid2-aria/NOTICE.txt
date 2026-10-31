@@ -65,6 +65,13 @@ focus, events and scrolling, explicit state, and direct labels instead of DOM
 queries and relationships. Original copyright and derivation notices ship
 in source, JavaScript, and declarations. See LICENSES/Apache-2.0.txt.
 
+src/menu-trigger.ts derives from Solid Aria's menu/create-menu-trigger.ts,
+based on Adobe React Spectrum's useMenuTrigger.ts (Copyright 2020 Adobe).
+Modifications for GPUIX: composed native button props, native focus and key
+names, direct labels, and mouse, keyboard, and OS Click activation only.
+Original copyright and derivation notices ship in source, JavaScript,
+and declarations. See LICENSES/Apache-2.0.txt.
+
 The upstream notice and original React Spectrum notice are preserved
 verbatim in LICENSES/solid2-aria-NOTICE.txt and
 LICENSES/react-spectrum-NOTICE.txt. The MIT text is in LICENSE.

@@ -40,6 +40,8 @@ import { contains, createNativeServices, normalizeKey } from "./native.js";
 import type { NativeRef } from "./native.js";
 
 export interface MenuProps<T> {
+  "aria-id"?: string;
+  "aria-labelledby"?: string;
   "aria-label"?: string;
   "aria-description"?: string;
   autoFocus?: boolean | "first" | "last";
@@ -207,8 +209,14 @@ export const createMenu = <T>(
       get "aria-description"() {
         return props["aria-description"];
       },
+      get "aria-id"() {
+        return props["aria-id"];
+      },
       get "aria-label"() {
         return props["aria-label"];
+      },
+      get "aria-labelledby"() {
+        return props["aria-labelledby"];
       },
       onFocus(event) {
         if (event.elementId === ref()?.id) {

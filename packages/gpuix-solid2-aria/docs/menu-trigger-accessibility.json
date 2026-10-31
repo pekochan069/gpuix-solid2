@@ -1,0 +1,21 @@
+{
+  "platform": "Linux WSL2 Xvfb X11, GPUIX 0.11.0, AT-SPI",
+  "roles_and_names": {
+    "Actions": 43,
+    "Disabled actions": 43,
+    "Available actions": 33,
+    "Apple": 35,
+    "Banana": 35,
+    "Cherry": 35
+  },
+  "os_click_opens_menu": true,
+  "os_action_closes_and_unmounts_menu": true,
+  "disabled_click_does_not_open": true,
+  "os_click_reopens_menu": true,
+  "trigger_closed_states": [1124075776, 0],
+  "trigger_open_states": [1124075776, 0],
+  "expanded_reported": false,
+  "disabled_trigger_reported_enabled": true,
+  "trigger_relationships": [],
+  "menu_relationships": []
+}

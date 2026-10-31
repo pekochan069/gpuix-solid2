@@ -143,7 +143,28 @@ Up and Down move focus and wrap by default, skipping disabled items. Set `should
 
 Action menus close after activation. Selectable menus close on Enter. Mouse and OS Click close single-selection menus and keep multiple-selection menus open. Space keeps selectable menus open. An item's `shouldCloseOnSelect` overrides these defaults. `onClose` requests closure; the application owns open state and mounting. `autoFocus` accepts `true`, `"first"`, or `"last"`, preferring an enabled selected item before its first or last fallback.
 
-Compose popup dismissal with `createOverlay`, and explicitly chain shared handlers. `merge` alone overwrites handlers such as `onKeyDown`. The [native fixture](fixtures/menu-native.ts) composes a modal overlay with containment, Escape and outside dismissal, unmounting, and restoration to its trigger. Menu behavior leaves Escape and Tab to the containing overlay or application. Trigger behavior, submenus, sections, multi-character search, links, drag-across activation, virtual focus, and component wrappers remain deferred. Supply direct labels and descriptions. The backend omits checked and disabled states and relationships in the observed OS tree. See the [Menu contract and native evidence](PORTING.md#menu-stage).
+Compose popup dismissal with `createOverlay`, and explicitly chain shared handlers. `merge` alone overwrites handlers such as `onKeyDown`. The [native fixture](fixtures/menu-native.ts) composes a modal overlay with containment, Escape and outside dismissal, unmounting, and restoration to its trigger. Menu behavior leaves Escape and Tab to the containing overlay or application. Submenus, sections, multi-character search, links, drag-across activation, virtual focus, and component wrappers remain deferred. Supply direct labels and descriptions. The backend omits checked and disabled states and relationships in the observed OS tree. See the [Menu contract and native evidence](PORTING.md#menu-stage).
+
+## Menu triggers
+
+Use `createMenuTrigger(props, state, triggerRef)` from `gpuix-solid2-aria/menu-trigger` with `createMenuTriggerState` from `gpuix-solid2-stately`. Spread its `menuTriggerProps` directly onto a native `div`. The trigger already composes native button behavior. Pass its `menuProps` to `createMenu`, using a separate `TreeState` for the menu items.
+
+```ts
+const state = createMenuTriggerState({});
+const trigger = createMenuTrigger(
+  { "aria-label": "Actions" },
+  state,
+  () => triggerElement
+);
+// Inside the conditionally mounted menu's owner:
+const menu = createMenu(trigger.menuProps, treeState, () => menuElement);
+```
+
+Mount the menu and its items only while `state.isOpen` is true. Compose it with `createOverlay` using `state.close` and the same trigger ref for dismissal and restoration. Explicitly chain the menu and overlay key handlers. The [complete native fixture](fixtures/menu-trigger-native.ts) demonstrates this composition.
+
+Enter, Space, and Down request opening with first-item focus on key-down. Up requests last-item focus. Alt with Up or Down also works. An enabled selected item takes precedence over either endpoint. Repeats and modified shortcuts other than Alt arrows do not open. Mouse-down opens before release; OS Click opens with first-item focus. Keyboard activation toggles an already open menu. Disabled triggers reject every activation path and leave Tab order. Controlled parents may accept or reject open and close requests.
+
+The menu inherits the trigger's direct label unless you override it. Semantic props include expanded state, popup type, IDs, and relationships, but the published backend omits expanded state and relationships from the observed OS tree. Long-press, context-menu mode, alternate popup types, submenus, and component wrappers remain deferred. See the [MenuTrigger contract and evidence](PORTING.md#menutrigger-stage).
 
 ## Tabs
 
@@ -239,3 +260,5 @@ Run `bun run test:native:search-field` in a Wayland session for native editing, 
 Run `bun run test:native:number-field` in a Wayland session for locale formatting, arrow and page stepping, bounds, native editing, submit and blur commits, focus, Tab traversal, controlled requests, and guards. For the X11 OS audit, set both inspection flags above and run `python3 scripts/check-number-field-atspi.py` in the same AT-SPI environment. It checks OS Click on both step buttons and records missing numeric values and relationships. Set `GPUIX_ARIA_AUDIT_OUTPUT` to write the audit. The fixture verifies that OS Click changed controlled number state and preserved disabled and readonly values before it exits.
 
 Run `bun run test:native:menu` in a Wayland session for navigation, selection, controlled requests, mouse hit testing, disabled guards, Tab traversal, and overlay dismissal and restoration. For the X11 OS audit, set both inspection flags above and run `python3 scripts/check-menu-atspi.py` in the same AT-SPI environment. It checks OS Click selection and action-menu unmounting, and records roles, names, missing checked state, and disabled items reported enabled. Set `GPUIX_ARIA_AUDIT_OUTPUT` to write the audit. The fixture verifies the resulting Solid selection and action callback before exiting.
+
+Run `bun run test:native:menu-trigger` in a Wayland session for opening keys, initial focus, mouse hit testing, disabled Tab traversal, controlled rejection, dismissal, and restoration. For the X11 OS audit, set both inspection flags and run `python3 scripts/check-menu-trigger-atspi.py` in the same AT-SPI environment. It verifies OS Click opening, activation, unmounting, disabled guards, and reopening. Set `GPUIX_ARIA_AUDIT_OUTPUT` to record the audit. The fixture checks the resulting action, open state, and focus before exiting.
