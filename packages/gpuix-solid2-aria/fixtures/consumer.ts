@@ -12,6 +12,7 @@ import {
   createLocale,
   createMenu,
   createMenuItem,
+  createMenuTrigger,
   createNumberField,
   createSearchField,
   createTab,
@@ -23,6 +24,7 @@ import {
 import {
   createCheckboxGroupState,
   createDisclosureState,
+  createMenuTriggerState,
   createNumberFieldState,
   createSearchFieldState,
   createTabListState,
@@ -57,6 +59,7 @@ let numberInput!: HostElement;
 let increaseNumber!: HostElement;
 let menu!: HostElement;
 let menuItem!: HostElement;
+let menuTrigger!: HostElement;
 let menuActions = 0;
 const tabNodes = new Map<number, HostElement>();
 let selected = () => false;
@@ -68,6 +71,12 @@ const app = createRoot(renderer);
 try {
   app.render(() => {
     const state = createToggleState();
+
+    const trigger = createMenuTrigger(
+      { "aria-label": "Open native menu" },
+      createMenuTriggerState({}),
+      () => menuTrigger
+    );
 
     const menuState = createTreeState({
       children: (entry: { id: number }) =>
@@ -184,6 +193,14 @@ try {
     const clear = createButton(search.clearButtonProps, () => clearSearch);
 
     return [
+      jsx(
+        "div",
+        merge(trigger.menuTriggerProps, {
+          ref: (node: HostElement) => {
+            menuTrigger = node;
+          },
+        })
+      ),
       jsx(
         "div",
         merge(nativeMenu.menuProps, {
@@ -319,6 +336,19 @@ try {
       ),
     ];
   });
+  assert.equal(menuTrigger.props.get("aria-expanded"), false);
+  app.dispatch({ elementId: menuTrigger.id, eventType: "keyDown", key: "up" });
+  assert.equal(menuTrigger.props.get("aria-expanded"), true);
+  assert.equal(menuTrigger.props.get("aria-haspopup"), "menu");
+  assert.equal(menuTrigger.props.has("aria-controls"), true);
+  app.dispatch({
+    elementId: menuTrigger.id,
+    eventType: "keyDown",
+    key: "down",
+  });
+  assert.equal(menuTrigger.props.get("aria-expanded"), false);
+  app.dispatch({ elementId: menuTrigger.id, eventType: "click" });
+  assert.equal(menuTrigger.props.get("aria-expanded"), true);
   app.dispatch({ elementId: check.id, eventType: "keyDown", key: "space" });
   app.dispatch({ elementId: check.id, eventType: "keyUp", key: "space" });
   assert.equal(selected(), true);

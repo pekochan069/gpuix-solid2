@@ -366,7 +366,7 @@
     },
     "createMenuTrigger": {
       "source": "menu/create-menu-trigger",
-      "status": "deferred"
+      "status": "native-subset"
     },
     "createSubmenuTrigger": {
       "source": "menu/create-submenu-trigger",

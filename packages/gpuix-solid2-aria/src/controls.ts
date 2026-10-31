@@ -23,6 +23,7 @@ export interface NativeControlProps extends HostProps {
   "aria-controls"?: string;
   "aria-labelledby"?: string;
   "aria-describedby"?: string;
+  "aria-haspopup"?: "menu";
 }
 
 export interface ButtonProps extends PressProps, FocusProps {
