@@ -14,7 +14,8 @@ preserved in LICENSE, LICENSES/Apache-2.0.txt,
 LICENSES/react-spectrum-NOTICE.txt, and LICENSES/solid2-aria-NOTICE.txt.
 
 Modifications for GPUIX: explicit date validation locale, explicit native
-virtualizer size inputs, and renderer-neutral native event, target, file,
+virtualizer size inputs, controlled number-step draft restoration,
+and renderer-neutral native event, target, file,
 and validation declarations. The deterministic build records adaptations
 in dist/native-audit.json and marks modified files. Other state algorithms
 and translation data are reused without changes. Solid's client runtime

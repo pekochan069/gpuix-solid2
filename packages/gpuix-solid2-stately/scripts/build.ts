@@ -62,6 +62,7 @@ const upstreamFiles = await readdir(path.join(upstream, "dist"), {
 
 const files = upstreamFiles
   .filter((file) => file.endsWith(".js") || file.endsWith(".d.ts"))
+  .map((file) => file.split(path.sep).join("/"))
   .toSorted();
 
 await Promise.all(
@@ -327,6 +328,14 @@ await Promise.all(
   })
 );
 
+await adapt("numberfield/create-number-field-state.js", (source) =>
+  replaceExactly(
+    source,
+    "\t\tif (v === numberValue()) setInputValue(format(v));\n\t\tsetNumberValue(v);",
+    "\t\tsetNumberValue(v);\n\t\tsetInputValue(format(numberValue()));"
+  )
+);
+
 await cp(path.join(root, "LICENSES"), path.join(output, "LICENSES"), {
   recursive: true,
 });
@@ -348,6 +357,7 @@ await writeFile(
               "virtualizer/create-virtualizer-state.js",
               "virtualizer/virtualizer.js",
               "index.js",
+              "numberfield/create-number-field-state.js",
             ].includes(file)
               ? "adapted"
               : "unchanged",

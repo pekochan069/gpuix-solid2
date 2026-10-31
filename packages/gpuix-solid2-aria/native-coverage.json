@@ -378,7 +378,7 @@
     },
     "createNumberField": {
       "source": "numberfield/create-number-field",
-      "status": "deferred"
+      "status": "native-subset"
     },
     "DismissButton": {
       "source": "overlays/dismiss-button",

@@ -1,6 +1,6 @@
 # gpuix-solid2-aria
 
-Native interaction behaviors for the Solid 2 GPUIX renderer. This is the native behavior subset of [issue #2](https://github.com/pekochan069/gpuix-solid2/issues/2). It covers buttons, disclosures, tabs, toggles, toggle button groups, checkboxes, checkbox groups, switches, radio groups, text and search fields, linear listboxes, focus, and overlay foundations. It does not provide full `@solid2-aria/core` parity or complete native accessibility. See [coverage and platform gaps](PORTING.md).
+Native interaction behaviors for the Solid 2 GPUIX renderer. This is the native behavior subset of [issue #2](https://github.com/pekochan069/gpuix-solid2/issues/2). It covers buttons, disclosures, tabs, toggles, toggle button groups, checkboxes, checkbox groups, switches, radio groups, text, search and number fields, linear listboxes, focus, and overlay foundations. It does not provide full `@solid2-aria/core` parity or complete native accessibility. See [coverage and platform gaps](PORTING.md).
 
 ## Render a native checkbox
 
@@ -106,6 +106,35 @@ function Details() {
 
 Enter and Space toggle on key-down. Mouse and OS Click toggle through state, including controlled parents that reject requests. Disabled triggers reject activation and are skipped by Tab. Panel contents are recreated after collapse. Supply direct labels for the trigger and panel. The published backend omits expanded state and relationships in the observed OS tree. See the [Disclosure contract and evidence](PORTING.md#disclosure-stage).
 
+## Number fields
+
+Use `createNumberField(props, state, inputRef)` from `gpuix-solid2-aria/number-field` with `createNumberFieldState` from `gpuix-solid2-stately`. State owns numeric values, locale, formatting, bounds, step, validation, and `onChange` requests. Spread `inputProps` onto a native `input`. Pass `incrementButtonProps` and `decrementButtonProps` to `createButton`, then spread each button's `buttonProps` onto a native `div`.
+
+```ts
+const state = createNumberFieldState({
+  defaultValue: 1.5,
+  locale: "de-DE",
+  minValue: 0,
+  maxValue: 10,
+  step: 0.5,
+});
+const field = createNumberField({ "aria-label": "Amount" }, state, () => input);
+const increase = createButton(
+  field.incrementButtonProps,
+  () => increaseElement
+);
+const decrease = createButton(
+  field.decrementButtonProps,
+  () => decreaseElement
+);
+```
+
+Editing updates the state's draft text. Enter submit and blur commit it through the locale parser. Native text may contain incomplete or invalid numbers until commit. State restores invalid text to the prior committed number, clamps and snaps valid values by default, and commits empty text as `NaN`. Up and Down step the value. Page Up and Page Down each step once, including keyboard repeats. Home, End, Left, and Right preserve native caret movement. GPUIX consumes Home and End before JavaScript, so this subset does not use them to jump to numeric bounds.
+
+Step buttons stay outside Tab order and mouse press keeps editor focus. Disabled editors leave Tab order; readonly editors remain focusable. Both guards block editing, commit, and stepping. Supply reactive flags to the behavior and state when both use them. Controlled state accepts draft editing, requests a numeric change on commit or step, and restores committed text when the parent rejects a step. Applications localize `incrementButtonLabel` and `decrementButtonLabel`, which default to `Increase value` and `Decrease value`.
+
+The behavior exposes `isInvalid`, `validationErrors`, and `validationDetails` from state's displayed validation. Submit and blur publish validation for unchanged and empty drafts too. It does not add browser constraint validation, forms, label relationships, wheel stepping, press-and-hold timers, announcements, or native numeric accessibility actions. The published backend exposes a generic editor entry and drops numeric range semantics. See the [NumberField contract and native evidence](PORTING.md#numberfield-stage).
+
 ## Tabs
 
 Call `createTabList(props, state, ref)` before `createTab({ key, ...props }, state, ref)` and `createTabPanel(props, state)` from `gpuix-solid2-aria/tabs`. Use one `TabListState` from `gpuix-solid2-stately` per list. Spread `tabListProps` onto the list container, `tabProps` onto each native tab, and `tabPanelProps` onto its panel. Tab keys are unique string or number collection keys. Render the tabs in collection order within the list container.
@@ -196,3 +225,5 @@ Run `bun run test:native:disclosure` for expansion, native Tab traversal, panel 
 Run `bun run test:native:tabs` for automatic and manual activation, wrapping, disabled skipping, RTL, orientation, native Tab traversal, conditional panels, and controlled rejection. With `GPUIX_ARIA_INSPECT=1`, run `python3 scripts/check-tabs-atspi.py` during its inspection interval in the same AT-SPI environment. Set `GPUIX_ARIA_AUDIT_OUTPUT` to record the audit. The checker changes selection through OS Click, verifies inactive panels leave the OS tree, and records selected state, roles, and missing relationships.
 
 Run `bun run test:native:search-field` in a Wayland session for native editing, Enter submit, Escape dismissal ordering, mouse clear, focus retention, Tab traversal, controlled rejection, and guards. For the X11 OS audit, set both `GPUIX_ARIA_INSPECT_ONLY=1` and `GPUIX_ARIA_INSPECT=1`, then run `python3 scripts/check-search-field-atspi.py` in the same AT-SPI environment. Inspect-only mode skips the keyboard proof and retains the window for OS actions and screenshots. Set `GPUIX_ARIA_AUDIT_OUTPUT` to record the audit. The fixture checks that OS Click cleared the controlled query and preserved disabled and readonly values before it exits. X11 keyboard injection was inconsistent in this session; the passing keyboard proof used Wayland.
+
+Run `bun run test:native:number-field` in a Wayland session for locale formatting, arrow and page stepping, bounds, native editing, submit and blur commits, focus, Tab traversal, controlled requests, and guards. For the X11 OS audit, set both inspection flags above and run `python3 scripts/check-number-field-atspi.py` in the same AT-SPI environment. It checks OS Click on both step buttons and records missing numeric values and relationships. Set `GPUIX_ARIA_AUDIT_OUTPUT` to write the audit. The fixture verifies that OS Click changed controlled number state and preserved disabled and readonly values before it exits.

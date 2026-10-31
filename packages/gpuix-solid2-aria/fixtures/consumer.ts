@@ -10,6 +10,7 @@ import {
   createDisclosure,
   createKeyboard,
   createLocale,
+  createNumberField,
   createSearchField,
   createTab,
   createTabList,
@@ -20,6 +21,7 @@ import {
 import {
   createCheckboxGroupState,
   createDisclosureState,
+  createNumberFieldState,
   createSearchFieldState,
   createTabListState,
   createToggleState,
@@ -48,6 +50,8 @@ let tabList!: HostElement;
 let tabPanel!: HostElement;
 let searchInput!: HostElement;
 let clearSearch!: HostElement;
+let numberInput!: HostElement;
+let increaseNumber!: HostElement;
 const tabNodes = new Map<number, HostElement>();
 let selected = () => false;
 let count = 0;
@@ -58,6 +62,17 @@ const app = createRoot(renderer);
 try {
   app.render(() => {
     const state = createToggleState();
+
+    const number = createNumberField(
+      { "aria-label": "Amount" },
+      createNumberFieldState({ defaultValue: 1.5, locale: "de-DE", step: 0.5 }),
+      () => numberInput
+    );
+
+    const increase = createButton(
+      number.incrementButtonProps,
+      () => increaseNumber
+    );
 
     const disclosure = createDisclosure(
       {},
@@ -135,6 +150,22 @@ try {
     const clear = createButton(search.clearButtonProps, () => clearSearch);
 
     return [
+      jsx(
+        "input",
+        merge(number.inputProps, {
+          ref: (node: HostElement) => {
+            numberInput = node;
+          },
+        })
+      ),
+      jsx(
+        "div",
+        merge(increase.buttonProps, {
+          ref: (node: HostElement) => {
+            increaseNumber = node;
+          },
+        })
+      ),
       jsx(
         "input",
         merge(search.inputProps, {
@@ -241,6 +272,18 @@ try {
   app.dispatch({ elementId: check.id, eventType: "keyDown", key: "space" });
   app.dispatch({ elementId: check.id, eventType: "keyUp", key: "space" });
   assert.equal(selected(), true);
+  assert.equal(numberInput.props.get("value"), "1,5");
+  app.dispatch({ elementId: numberInput.id, eventType: "keyDown", key: "up" });
+  assert.equal(numberInput.props.get("value"), "2");
+  app.dispatch({ elementId: increaseNumber.id, eventType: "click" });
+  assert.equal(numberInput.props.get("value"), "2,5");
+  app.dispatch({
+    elementId: numberInput.id,
+    eventType: "change",
+    value: "3,7",
+  });
+  app.dispatch({ elementId: numberInput.id, eventType: "submit" });
+  assert.equal(numberInput.props.get("value"), "3,5");
   assert.equal(check.props.get("aria-checked"), true);
   app.dispatch({ elementId: button.id, eventType: "click" });
   assert.equal(count, 1);

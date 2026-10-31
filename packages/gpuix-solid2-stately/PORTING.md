@@ -30,7 +30,7 @@ Consuming upstream unchanged would retain browser locale lookup, window-scoped v
 | `menu/*` | Shared | Trigger, submenu, expanded keys, and host interactions. |
 | `tooltip/*` | Shared | Timers and owner cleanup; native focus and hover interactions remain host work. |
 | `searchfield/*` | Shared; target declarations adapted | Native text input and submit or clear actions. |
-| `numberfield/*` | Shared | Explicit locale, parsing, formatting, stepping, and validation. |
+| `numberfield/create-number-field-state` | Adapted | Explicit locale, parsing, formatting, stepping, and validation. Stepping restores the committed text when a controlled parent rejects an edited draft. Accepted values still format through the state effect. |
 | `slider/*` | Shared | Values and ranges; host supplies track geometry and pointer interactions. |
 | `calendar/*` | Shared | Explicit locale and calendar factory; calendar and range selection, date arithmetic, and navigation. |
 | `datepicker/create-date-field-state` | Adapted | Passes reactive locale to validation. |

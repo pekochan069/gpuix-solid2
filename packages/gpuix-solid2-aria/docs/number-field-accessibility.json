@@ -1,0 +1,18 @@
+{
+  "platform": "Linux WSLg X11, GPUIX 0.11.0, AT-SPI",
+  "roles_and_names": {
+    "Amount": 52,
+    "Increase value": 43,
+    "Decrease value": 43,
+    "Disabled amount": 52,
+    "Increase disabled amount": 43,
+    "Readonly amount": 52,
+    "Increase readonly amount": 43
+  },
+  "os_click_steps_controlled_number": true,
+  "number_description_tracks_value": true,
+  "numeric_value_interface": false,
+  "disabled_button_reported_enabled": true,
+  "readonly_button_reported_enabled": true,
+  "number_relationships": []
+}

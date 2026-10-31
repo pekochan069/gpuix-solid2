@@ -11,6 +11,7 @@ const notices = new Map(
     "disclosure",
     "tabs",
     "search-field",
+    "number-field",
   ].map((name) => [
     name,
     readFileSync(new URL(`src/${name}.ts`, import.meta.url), "utf-8").split(
