@@ -51,6 +51,13 @@ keyboard events, explicit state, and an application-provided clear label
 instead of web dictionaries. Original copyright and derivation notices
 ship in source, JavaScript, and declarations. See LICENSES/Apache-2.0.txt.
 
+src/number-field.ts derives from Solid Aria's numberfield/create-number-field.ts,
+based on Adobe React Spectrum's useNumberField.ts (Copyright 2020 Adobe).
+Modifications for GPUIX: native editing and focus, explicit state,
+application-localized buttons, and commit-time parsing without DOM input
+filtering, forms, or live regions. Original copyright and derivation notices
+ship in source, JavaScript, and declarations. See LICENSES/Apache-2.0.txt.
+
 The upstream notice and original React Spectrum notice are preserved
 verbatim in LICENSES/solid2-aria-NOTICE.txt and
 LICENSES/react-spectrum-NOTICE.txt. The MIT text is in LICENSE.

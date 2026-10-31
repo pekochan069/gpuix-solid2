@@ -228,6 +228,44 @@ test("number parsing and formatting use the explicit locale", () => {
   expect(state.numberValue).toBe(2345.5);
 });
 
+test("controlled number stepping restores rejected drafts and follows accepted values", () => {
+  const [value, setValue] = setup(() => createSignal(5));
+  let accept = false;
+  const requests: number[] = [];
+
+  const state = setup(() =>
+    createNumberFieldState({
+      locale: "en-US",
+      onChange(next) {
+        requests.push(next);
+
+        if (accept) {
+          setValue(next);
+        }
+      },
+      get value() {
+        return value();
+      },
+    })
+  );
+
+  state.setInputValue("8");
+  flush();
+  state.increment();
+  flush();
+  expect(requests).toEqual([9]);
+  expect(state.inputValue).toBe("5");
+  expect(state.numberValue).toBe(5);
+  state.setInputValue("8");
+  flush();
+  accept = true;
+  state.decrement();
+  flush();
+  expect(requests).toEqual([9, 7]);
+  expect(value()).toBe(7);
+  expect(state.inputValue).toBe("7");
+});
+
 const date = new CalendarDate(2026, 10, 30);
 const minimum = new CalendarDate(2026, 11, 1);
 
