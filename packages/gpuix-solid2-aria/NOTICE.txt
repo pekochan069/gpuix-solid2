@@ -44,6 +44,13 @@ and automatic tabbable-child detection. Original copyright and derivation
 notices ship in source, JavaScript, and declarations.
 See LICENSES/Apache-2.0.txt.
 
+src/search-field.ts derives from Solid Aria's searchfield/create-search-field.ts,
+based on Adobe React Spectrum's useSearchField.ts (Copyright 2020 Adobe).
+Modifications for GPUIX: native editor submit events, native focus and
+keyboard events, explicit state, and an application-provided clear label
+instead of web dictionaries. Original copyright and derivation notices
+ship in source, JavaScript, and declarations. See LICENSES/Apache-2.0.txt.
+
 The upstream notice and original React Spectrum notice are preserved
 verbatim in LICENSES/solid2-aria-NOTICE.txt and
 LICENSES/react-spectrum-NOTICE.txt. The MIT text is in LICENSE.

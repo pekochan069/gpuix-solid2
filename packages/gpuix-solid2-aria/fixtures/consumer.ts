@@ -10,6 +10,7 @@ import {
   createDisclosure,
   createKeyboard,
   createLocale,
+  createSearchField,
   createTab,
   createTabList,
   createTabPanel,
@@ -19,6 +20,7 @@ import {
 import {
   createCheckboxGroupState,
   createDisclosureState,
+  createSearchFieldState,
   createTabListState,
   createToggleState,
   createToggleGroupState,
@@ -44,6 +46,8 @@ let toggleItem!: HostElement;
 let disclosureTrigger!: HostElement;
 let tabList!: HostElement;
 let tabPanel!: HostElement;
+let searchInput!: HostElement;
+let clearSearch!: HostElement;
 const tabNodes = new Map<number, HostElement>();
 let selected = () => false;
 let count = 0;
@@ -122,7 +126,31 @@ try {
     const tabs = createTabList({}, tabState, () => tabList);
     const panel = createTabPanel({}, tabState);
 
+    const search = createSearchField(
+      { "aria-label": "Search" },
+      createSearchFieldState({ defaultValue: "query" }),
+      () => searchInput
+    );
+
+    const clear = createButton(search.clearButtonProps, () => clearSearch);
+
     return [
+      jsx(
+        "input",
+        merge(search.inputProps, {
+          ref: (node: HostElement) => {
+            searchInput = node;
+          },
+        })
+      ),
+      jsx(
+        "div",
+        merge(clear.buttonProps, {
+          ref: (node: HostElement) => {
+            clearSearch = node;
+          },
+        })
+      ),
       jsx(
         "div",
         merge(tabs.tabListProps, {
@@ -258,6 +286,26 @@ try {
     tabPanel.props.get("aria-labelledby"),
     secondTab.props.get("aria-id")
   );
+  assert.equal(searchInput.props.get("role"), "searchbox");
+  app.dispatch({
+    elementId: searchInput.id,
+    eventType: "change",
+    value: "native",
+  });
+  assert.equal(searchInput.props.get("value"), "native");
+  app.dispatch({
+    elementId: searchInput.id,
+    eventType: "keyDown",
+    key: "escape",
+  });
+  assert.equal(searchInput.props.get("value"), "");
+  app.dispatch({
+    elementId: searchInput.id,
+    eventType: "change",
+    value: "clear",
+  });
+  app.dispatch({ elementId: clearSearch.id, eventType: "click" });
+  assert.equal(searchInput.props.get("value"), "");
   console.log(
     "Compiled native consumer passed without browser globals, @solidjs/web, or upstream SSR."
   );

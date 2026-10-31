@@ -39,6 +39,7 @@
     "test:native:toggle-button-group": "bun --preload gpuix-solid2/preload fixtures/toggle-button-group-native.ts",
     "test:native:disclosure": "bun --preload gpuix-solid2/preload fixtures/disclosure-native.ts",
     "test:native:tabs": "bun --preload gpuix-solid2/preload fixtures/tabs-native.ts",
+    "test:native:search-field": "bun --preload gpuix-solid2/preload fixtures/search-field-native.ts",
     "prepack": "bun run build"
   },
   "dependencies": {

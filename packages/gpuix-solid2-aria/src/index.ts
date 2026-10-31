@@ -5,6 +5,8 @@ export * from "./interactions.js";
 
 export * from "./controls.js";
 
+export * from "./search-field.js";
+
 export * from "./disclosure.js";
 
 export * from "./tabs.js";
