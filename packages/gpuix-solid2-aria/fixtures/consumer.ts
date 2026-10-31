@@ -10,6 +10,8 @@ import {
   createDisclosure,
   createKeyboard,
   createLocale,
+  createMenu,
+  createMenuItem,
   createNumberField,
   createSearchField,
   createTab,
@@ -26,6 +28,7 @@ import {
   createTabListState,
   createToggleState,
   createToggleGroupState,
+  createTreeState,
   Item,
 } from "gpuix-solid2-stately";
 import { jsx } from "gpuix-solid2/jsx-runtime";
@@ -52,6 +55,9 @@ let searchInput!: HostElement;
 let clearSearch!: HostElement;
 let numberInput!: HostElement;
 let increaseNumber!: HostElement;
+let menu!: HostElement;
+let menuItem!: HostElement;
+let menuActions = 0;
 const tabNodes = new Map<number, HostElement>();
 let selected = () => false;
 let count = 0;
@@ -62,6 +68,34 @@ const app = createRoot(renderer);
 try {
   app.render(() => {
     const state = createToggleState();
+
+    const menuState = createTreeState({
+      children: (entry: { id: number }) =>
+        Item({
+          children: "Native action",
+          key: entry.id,
+          textValue: "Native action",
+        }),
+      items: [{ id: 0 }],
+      selectionMode: "single",
+    });
+
+    const nativeMenu = createMenu(
+      {
+        "aria-label": "Actions",
+        onAction: () => {
+          menuActions += 1;
+        },
+      },
+      menuState,
+      () => menu
+    );
+
+    const nativeMenuItem = createMenuItem(
+      { key: 0 },
+      menuState,
+      () => menuItem
+    );
 
     const number = createNumberField(
       { "aria-label": "Amount" },
@@ -150,6 +184,22 @@ try {
     const clear = createButton(search.clearButtonProps, () => clearSearch);
 
     return [
+      jsx(
+        "div",
+        merge(nativeMenu.menuProps, {
+          children: jsx(
+            "div",
+            merge(nativeMenuItem.menuItemProps, {
+              ref: (node: HostElement) => {
+                menuItem = node;
+              },
+            })
+          ),
+          ref: (node: HostElement) => {
+            menu = node;
+          },
+        })
+      ),
       jsx(
         "input",
         merge(number.inputProps, {
@@ -342,6 +392,14 @@ try {
     key: "escape",
   });
   assert.equal(searchInput.props.get("value"), "");
+  app.dispatch({ elementId: menuItem.id, eventType: "keyDown", key: "space" });
+  assert.equal(menuItem.props.get("aria-checked"), true);
+  app.dispatch({ elementId: menuItem.id, eventType: "keyUp", key: "space" });
+  assert.equal(menuActions, 1);
+  app.dispatch({ elementId: menuItem.id, eventType: "click" });
+  assert.equal(menuItem.props.get("aria-checked"), false);
+  assert.equal(menuActions, 2);
+  assert.equal(menu.props.get("role"), "menu");
   app.dispatch({
     elementId: searchInput.id,
     eventType: "change",

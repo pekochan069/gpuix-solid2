@@ -1,0 +1,24 @@
+{
+  "platform": "Linux WSL2 Xvfb X11, GPUIX 0.11.0, AT-SPI",
+  "roles_and_names": {
+    "single menu": 33,
+    "single-Apple": 45,
+    "single-Banana": 45,
+    "single-Cherry": 45,
+    "multiple menu": 33,
+    "multiple-Apple": 8,
+    "multiple-Cherry": 8
+  },
+  "action_menu_roles": {
+    "none menu": 33,
+    "none-Cherry": 35
+  },
+  "os_click_updates_controlled_single_selection": true,
+  "os_click_updates_multiple_selection": true,
+  "disabled_click_preserves_selection": true,
+  "os_action_closes_and_unmounts_menu": true,
+  "checked_radio_reported_checked": false,
+  "checked_item_reported_checked": false,
+  "disabled_item_reported_enabled": true,
+  "menu_relationships": []
+}
