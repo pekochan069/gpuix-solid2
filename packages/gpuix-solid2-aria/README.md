@@ -1,6 +1,6 @@
 # gpuix-solid2-aria
 
-Native interaction behaviors for the Solid 2 GPUIX renderer. This is the native behavior subset of [issue #2](https://github.com/pekochan069/gpuix-solid2/issues/2). It covers buttons, disclosures, tabs, toggles, toggle button groups, checkboxes, checkbox groups, switches, radio groups, text, search and number fields, menus, linear listboxes, focus, and overlay foundations. It does not provide full `@solid2-aria/core` parity or complete native accessibility. See [coverage and platform gaps](PORTING.md).
+Native interaction behaviors for the Solid 2 GPUIX renderer. This is the native behavior subset of [issue #2](https://github.com/pekochan069/gpuix-solid2/issues/2). It covers buttons, disclosures, tabs, toggles, toggle button groups, checkboxes, checkbox groups, switches, radio groups, text, search and number fields, menus, selects, linear listboxes, focus, and overlay foundations. It does not provide full `@solid2-aria/core` parity or complete native accessibility. See [coverage and platform gaps](PORTING.md).
 
 ## Render a native checkbox
 
@@ -45,6 +45,18 @@ Set `jsxImportSource` to `gpuix-solid2`. Use a native `div` for a checkbox surfa
 Behavior props use reactive property getters. Keep the returned object intact; destructuring a state getter takes a snapshot. Compose callbacks explicitly when behaviors handle the same event. Solid's `merge` overwrites a duplicate handler; it does not chain handlers.
 
 `createButton`, `createToggleButton`, `createCheckbox`, `createSwitch`, and `createPress` take a `() => HostElement | null` ref. `createToggleButton`, `createCheckbox`, and `createSwitch` also take `ToggleState` from `gpuix-solid2-stately`. `createTextField` returns native editor `inputProps` and `value`. Controlled inputs report change requests. Rejected edits require a native editor reset contract that GPUIX 0.11.0 does not expose; see the porting audit before using this pattern for input validation.
+
+## Selects
+
+Use `createSelect(props, state, triggerRef)` from `gpuix-solid2-aria/select` with `createSelectState` from `gpuix-solid2-stately`. Spread `triggerProps` directly onto a native `div`. Spread `valueProps` onto the child that displays `state.selectedItems`. Supply a direct `aria-label` on the trigger.
+
+Pass `menuProps` to `createListBox`, use the same state for `createOption`, and mount the listbox and its options only while `state.isOpen`. Compose `createOverlay` with the listbox for Escape, outside dismissal, modal Tab containment, and restoration to the trigger. Chain shared key handlers explicitly. The [native fixture](fixtures/select-native.ts) shows the complete composition.
+
+Enter, Space, Up, Down, and Alt with Up or Down open on key-down. Opening focuses an enabled selected option, then the first or last enabled option. Mouse-down opens before release, and accessibility Click opens through the same state. Popup navigation moves focus without selection; Enter selects on key-down, Space on release, and mouse or OS Click on activation. Single selection closes by default. Multiple selection stays open and toggles options. State owns `shouldCloseOnSelect`, controlled value and open requests, and validation.
+
+While a single select is closed, Left and Right request the previous and next enabled values without wrapping. Single characters search the collection using the configured locale. Multiple selects leave these closed-trigger keys alone. Disabled triggers leave Tab order and reject input; disabled collection keys are skipped. The behavior exposes state validation results and semantic required and invalid props.
+
+Forms, hidden selects, group focus-within callbacks, DOM label and error lookup, hover selection, drag-across activation, multi-character search, sections, links, virtualization, and component wrappers remain deferred. See the [Select contract and native evidence](PORTING.md#select-stage) for observed OS support and remaining backend gaps.
 
 ## Search fields
 

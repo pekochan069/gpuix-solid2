@@ -43,6 +43,7 @@
     "test:native:number-field": "bun --preload gpuix-solid2/preload fixtures/number-field-native.ts",
     "test:native:menu": "bun --preload gpuix-solid2/preload fixtures/menu-native.ts",
     "test:native:menu-trigger": "bun --preload gpuix-solid2/preload fixtures/menu-trigger-native.ts",
+    "test:native:select": "bun --preload gpuix-solid2/preload fixtures/select-native.ts",
     "prepack": "bun run build"
   },
   "dependencies": {

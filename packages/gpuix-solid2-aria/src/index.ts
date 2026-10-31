@@ -13,6 +13,8 @@ export * from "./menu.js";
 
 export * from "./menu-trigger.js";
 
+export * from "./select.js";
+
 export * from "./disclosure.js";
 
 export * from "./tabs.js";

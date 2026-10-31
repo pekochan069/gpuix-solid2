@@ -15,6 +15,7 @@ import {
   createMenuTrigger,
   createNumberField,
   createSearchField,
+  createSelect,
   createTab,
   createTabList,
   createTabPanel,
@@ -27,6 +28,7 @@ import {
   createMenuTriggerState,
   createNumberFieldState,
   createSearchFieldState,
+  createSelectState,
   createTabListState,
   createToggleState,
   createToggleGroupState,
@@ -60,6 +62,8 @@ let increaseNumber!: HostElement;
 let menu!: HostElement;
 let menuItem!: HostElement;
 let menuTrigger!: HostElement;
+let selectTrigger!: HostElement;
+let selectValue!: () => string | number | null;
 let menuActions = 0;
 const tabNodes = new Map<number, HostElement>();
 let selected = () => false;
@@ -71,6 +75,25 @@ const app = createRoot(renderer);
 try {
   app.render(() => {
     const state = createToggleState();
+
+    const selectState = createSelectState({
+      children: (entry: { id: number }) =>
+        Item({
+          children: String(entry.id),
+          key: entry.id,
+          textValue: String(entry.id),
+        }),
+      defaultValue: 0,
+      items: [{ id: 0 }, { id: 1 }],
+    });
+
+    selectValue = () => selectState.value;
+
+    const select = createSelect(
+      { "aria-label": "Native select" },
+      selectState,
+      () => selectTrigger
+    );
 
     const trigger = createMenuTrigger(
       { "aria-label": "Open native menu" },
@@ -193,6 +216,22 @@ try {
     const clear = createButton(search.clearButtonProps, () => clearSearch);
 
     return [
+      jsx(
+        "div",
+        merge(select.triggerProps, {
+          children: jsx(
+            "div",
+            merge(select.valueProps, {
+              get children() {
+                return String(selectState.value);
+              },
+            })
+          ),
+          ref: (node: HostElement) => {
+            selectTrigger = node;
+          },
+        })
+      ),
       jsx(
         "div",
         merge(trigger.menuTriggerProps, {
@@ -422,6 +461,15 @@ try {
     key: "escape",
   });
   assert.equal(searchInput.props.get("value"), "");
+  app.dispatch({
+    elementId: selectTrigger.id,
+    eventType: "keyDown",
+    key: "right",
+  });
+  assert.equal(selectValue(), 1);
+  app.dispatch({ elementId: selectTrigger.id, eventType: "click" });
+  assert.equal(selectTrigger.props.get("aria-haspopup"), "listbox");
+  assert.equal(selectTrigger.props.get("aria-expanded"), true);
   app.dispatch({ elementId: menuItem.id, eventType: "keyDown", key: "space" });
   assert.equal(menuItem.props.get("aria-checked"), true);
   app.dispatch({ elementId: menuItem.id, eventType: "keyUp", key: "space" });

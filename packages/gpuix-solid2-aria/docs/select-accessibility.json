@@ -1,0 +1,29 @@
+{
+  "platform": "Linux WSL2 WSLg X11, GPUIX 0.11.0, AT-SPI",
+  "roles_and_names": {
+    "Fruit": 43,
+    "Disabled fruit": 43,
+    "Toppings": 43,
+    "Fruit choices": 98,
+    "Apple": 32,
+    "Banana": 32,
+    "Cherry": 32
+  },
+  "os_click_opens_listbox": true,
+  "os_option_selects_closes_and_unmounts": true,
+  "os_reselection_closes": true,
+  "disabled_option_and_trigger_reject_os_click": true,
+  "multiple_selection_stays_open": true,
+  "multiple_value": ["Apple", "Cherry"],
+  "os_click_reopens_with_selected_value": true,
+  "trigger_closed_states": [1124075776, 0],
+  "trigger_open_states": [1124075776, 0],
+  "expanded_reported": false,
+  "selected_apple_states": [1136658688, 0],
+  "cherry_states_before_selection": [1128270080, 0],
+  "cherry_states_after_selection": [1136658688, 0],
+  "option_selected_reported": true,
+  "disabled_trigger_reported_enabled": true,
+  "trigger_relationships": [],
+  "listbox_relationships": []
+}
