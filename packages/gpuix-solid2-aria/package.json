@@ -37,6 +37,7 @@
     "test:native": "bun --preload gpuix-solid2/preload fixtures/native.ts",
     "test:native:checkbox-group": "bun --preload gpuix-solid2/preload fixtures/checkbox-group-native.ts",
     "test:native:toggle-button-group": "bun --preload gpuix-solid2/preload fixtures/toggle-button-group-native.ts",
+    "test:native:disclosure": "bun --preload gpuix-solid2/preload fixtures/disclosure-native.ts",
     "prepack": "bun run build"
   },
   "dependencies": {

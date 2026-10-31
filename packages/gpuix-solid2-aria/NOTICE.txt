@@ -28,6 +28,13 @@ native events, registered item focus, and native host props in place of
 DOM toolbar listeners. Original copyright and derivation notices ship
 in source, JavaScript, and declarations. See LICENSES/Apache-2.0.txt.
 
+src/disclosure.ts derives from Solid Aria's disclosure/create-disclosure.ts,
+based on Adobe React Spectrum's useDisclosure.ts (Copyright 2024 Adobe).
+Modifications for GPUIX: native trigger props and events, explicit state,
+and conditional panel mounting instead of DOM visibility and animation.
+Original copyright and derivation notices ship in source, JavaScript,
+and declarations. See LICENSES/Apache-2.0.txt.
+
 The upstream notice and original React Spectrum notice are preserved
 verbatim in LICENSES/solid2-aria-NOTICE.txt and
 LICENSES/react-spectrum-NOTICE.txt. The MIT text is in LICENSE.

@@ -7,6 +7,7 @@ import {
   createCheckbox,
   createCheckboxGroup,
   createCheckboxGroupItem,
+  createDisclosure,
   createKeyboard,
   createLocale,
   createToggleButtonGroup,
@@ -14,6 +15,7 @@ import {
 } from "gpuix-solid2-aria";
 import {
   createCheckboxGroupState,
+  createDisclosureState,
   createToggleState,
   createToggleGroupState,
 } from "gpuix-solid2-stately";
@@ -34,6 +36,7 @@ let button!: HostElement;
 let groupItem!: HostElement;
 let toggleGroup!: HostElement;
 let toggleItem!: HostElement;
+let disclosureTrigger!: HostElement;
 let selected = () => false;
 let count = 0;
 let key = "";
@@ -43,6 +46,12 @@ const app = createRoot(renderer);
 try {
   app.render(() => {
     const state = createToggleState();
+
+    const disclosure = createDisclosure(
+      {},
+      createDisclosureState({}),
+      () => disclosureTrigger
+    );
 
     const checkbox = createCheckbox(
       { "aria-label": "Accept" },
@@ -93,6 +102,14 @@ try {
     );
 
     return [
+      jsx(
+        "div",
+        merge(disclosure.buttonProps, {
+          ref: (node: HostElement) => {
+            disclosureTrigger = node;
+          },
+        })
+      ),
       jsx(
         "div",
         merge(toggles.groupProps, {
@@ -161,6 +178,19 @@ try {
   });
   app.dispatch({ elementId: toggleItem.id, eventType: "keyUp", key: "enter" });
   assert.equal(toggleItem.props.get("aria-checked"), false);
+  app.dispatch({
+    elementId: disclosureTrigger.id,
+    eventType: "keyDown",
+    key: "space",
+  });
+  assert.equal(disclosureTrigger.props.get("aria-expanded"), true);
+  app.dispatch({
+    elementId: disclosureTrigger.id,
+    eventType: "keyUp",
+    key: "space",
+  });
+  app.dispatch({ elementId: disclosureTrigger.id, eventType: "click" });
+  assert.equal(disclosureTrigger.props.get("aria-expanded"), false);
   console.log(
     "Compiled native consumer passed without browser globals, @solidjs/web, or upstream SSR."
   );

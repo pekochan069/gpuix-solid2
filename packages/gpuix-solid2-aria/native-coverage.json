@@ -138,7 +138,7 @@
     },
     "createDisclosure": {
       "source": "disclosure/create-disclosure",
-      "status": "deferred"
+      "status": "native-subset"
     },
     "createDrag": {
       "source": "dnd/create-drag",
