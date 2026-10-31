@@ -454,7 +454,7 @@
     },
     "createSearchField": {
       "source": "searchfield/create-search-field",
-      "status": "deferred"
+      "status": "native-subset"
     },
     "HiddenSelect": {
       "source": "select/hidden-select",

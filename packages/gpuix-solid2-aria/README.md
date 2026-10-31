@@ -1,6 +1,6 @@
 # gpuix-solid2-aria
 
-Native interaction behaviors for the Solid 2 GPUIX renderer. This is the native behavior subset of [issue #2](https://github.com/pekochan069/gpuix-solid2/issues/2). It covers buttons, disclosures, tabs, toggles, toggle button groups, checkboxes, checkbox groups, switches, radio groups, text fields, linear listboxes, focus, and overlay foundations. It does not provide full `@solid2-aria/core` parity or complete native accessibility. See [coverage and platform gaps](PORTING.md).
+Native interaction behaviors for the Solid 2 GPUIX renderer. This is the native behavior subset of [issue #2](https://github.com/pekochan069/gpuix-solid2/issues/2). It covers buttons, disclosures, tabs, toggles, toggle button groups, checkboxes, checkbox groups, switches, radio groups, text and search fields, linear listboxes, focus, and overlay foundations. It does not provide full `@solid2-aria/core` parity or complete native accessibility. See [coverage and platform gaps](PORTING.md).
 
 ## Render a native checkbox
 
@@ -45,6 +45,24 @@ Set `jsxImportSource` to `gpuix-solid2`. Use a native `div` for a checkbox surfa
 Behavior props use reactive property getters. Keep the returned object intact; destructuring a state getter takes a snapshot. Compose callbacks explicitly when behaviors handle the same event. Solid's `merge` overwrites a duplicate handler; it does not chain handlers.
 
 `createButton`, `createToggleButton`, `createCheckbox`, `createSwitch`, and `createPress` take a `() => HostElement | null` ref. `createToggleButton`, `createCheckbox`, and `createSwitch` also take `ToggleState` from `gpuix-solid2-stately`. `createTextField` returns native editor `inputProps` and `value`. Controlled inputs report change requests. Rejected edits require a native editor reset contract that GPUIX 0.11.0 does not expose; see the porting audit before using this pattern for input validation.
+
+## Search fields
+
+Use `createSearchField(props, state, inputRef)` from `gpuix-solid2-aria/search-field` with `SearchFieldState` from `gpuix-solid2-stately`. Spread `inputProps` onto a native `input`. Pass `clearButtonProps` to `createButton`, then spread that button's `buttonProps` onto a native `div`.
+
+```ts
+const state = createSearchFieldState({ defaultValue: "query" });
+const search = createSearchField(
+  { "aria-label": "Search documents", onSubmit: searchDocuments },
+  state,
+  () => inputElement
+);
+const clear = createButton(search.clearButtonProps, () => clearElement);
+```
+
+State owns `value`, `defaultValue`, and `onChange`. The behavior owns `onSubmit` and `onClear`. Native editor submit invokes `onSubmit` once per Enter. Escape requests an empty value and consumes overlay dismissal while the state is nonempty. An empty field leaves Escape to its parent. `onKeyDown` receives normalized keys and can prevent the clear action. Mouse clear focuses the editor on press-start and clears on click. The clear button stays outside Tab order. Disabled and readonly fields reject edits, clear, and submit. Readonly editors remain in Tab order.
+
+Controlled parents can reject requests. The native editor rollback limitation documented above still applies. Set a reactive `clearButtonLabel` for application-localized text; its default is `"Clear search"`. Widget dictionaries, form validation, label and error relationships, password editing, and component wrappers remain deferred. The backend exposes the search editor as a generic entry. See the [SearchField contract and native evidence](PORTING.md#searchfield-stage).
 
 ## Disclosures
 
@@ -176,3 +194,5 @@ Run `bun run test:native:toggle-button-group` for single and multiple selection,
 Run `bun run test:native:disclosure` for expansion, native Tab traversal, panel unmounting, controlled rejection, and disabled guards. With `GPUIX_ARIA_INSPECT=1`, run `python3 scripts/check-disclosure-atspi.py` during the inspection interval in the same AT-SPI environment. Set `GPUIX_ARIA_AUDIT_OUTPUT` to record the audit. The checker expands and collapses the panel through OS Click, checks its presence in the OS tree, and records the missing expanded state and relationships.
 
 Run `bun run test:native:tabs` for automatic and manual activation, wrapping, disabled skipping, RTL, orientation, native Tab traversal, conditional panels, and controlled rejection. With `GPUIX_ARIA_INSPECT=1`, run `python3 scripts/check-tabs-atspi.py` during its inspection interval in the same AT-SPI environment. Set `GPUIX_ARIA_AUDIT_OUTPUT` to record the audit. The checker changes selection through OS Click, verifies inactive panels leave the OS tree, and records selected state, roles, and missing relationships.
+
+Run `bun run test:native:search-field` in a Wayland session for native editing, Enter submit, Escape dismissal ordering, mouse clear, focus retention, Tab traversal, controlled rejection, and guards. For the X11 OS audit, set both `GPUIX_ARIA_INSPECT_ONLY=1` and `GPUIX_ARIA_INSPECT=1`, then run `python3 scripts/check-search-field-atspi.py` in the same AT-SPI environment. Inspect-only mode skips the keyboard proof and retains the window for OS actions and screenshots. Set `GPUIX_ARIA_AUDIT_OUTPUT` to record the audit. The fixture checks that OS Click cleared the controlled query and preserved disabled and readonly values before it exits. X11 keyboard injection was inconsistent in this session; the passing keyboard proof used Wayland.
