@@ -526,15 +526,15 @@
     },
     "createTab": {
       "source": "tabs/create-tab",
-      "status": "deferred"
+      "status": "native-subset"
     },
     "createTabList": {
       "source": "tabs/create-tab-list",
-      "status": "deferred"
+      "status": "native-subset"
     },
     "createTabPanel": {
       "source": "tabs/create-tab-panel",
-      "status": "deferred"
+      "status": "native-subset"
     },
     "createTag": {
       "source": "tag/create-tag",
