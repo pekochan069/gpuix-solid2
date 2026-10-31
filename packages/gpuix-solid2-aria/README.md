@@ -1,6 +1,6 @@
 # gpuix-solid2-aria
 
-Native interaction behaviors for the Solid 2 GPUIX renderer. This is the native behavior subset of [issue #2](https://github.com/pekochan069/gpuix-solid2/issues/2). It covers buttons, toggles, checkboxes, checkbox groups, switches, radio groups, text fields, linear listboxes, focus, and overlay foundations. It does not provide full `@solid2-aria/core` parity or complete native accessibility. See [coverage and platform gaps](PORTING.md).
+Native interaction behaviors for the Solid 2 GPUIX renderer. This is the native behavior subset of [issue #2](https://github.com/pekochan069/gpuix-solid2/issues/2). It covers buttons, toggles, toggle button groups, checkboxes, checkbox groups, switches, radio groups, text fields, linear listboxes, focus, and overlay foundations. It does not provide full `@solid2-aria/core` parity or complete native accessibility. See [coverage and platform gaps](PORTING.md).
 
 ## Render a native checkbox
 
@@ -64,6 +64,28 @@ Space and mouse activation toggle only that item's value. Each enabled item has 
 
 The group exposes `isInvalid`, `validationErrors`, and `validationDetails` from state. Item invalid state combines group and item flags. Group required state applies while the selection is empty, unless an item supplies its own `isRequired`. Group focus-within, label relationships, per-item validation aggregation, and native forms remain deferred. See the [CheckboxGroup contract and native evidence](PORTING.md#checkboxgroup-stage).
 
+## Toggle button groups
+
+Call `createToggleButtonGroup(props, state, ref)` before `createToggleButtonGroupItem(props, state, ref)` for each item. Both are exported from `gpuix-solid2-aria/toggle-button-group` and use one `ToggleGroupState` from `gpuix-solid2-stately`. Spread `groupProps` onto the containing native `div` and each item's `buttonProps` onto a native descendant. Give each item a unique string or number `id` and a direct `aria-label`. The item `id` identifies its selection key; it is not a native element ID.
+
+```ts
+const state = createToggleGroupState({ defaultSelectedKeys: ["left"] });
+const group = createToggleButtonGroup(
+  { "aria-label": "Alignment" },
+  state,
+  () => groupElement
+);
+const left = createToggleButtonGroupItem(
+  { id: "left", "aria-label": "Left" },
+  state,
+  () => leftElement
+);
+```
+
+Single selection uses `radiogroup` and `radio` roles. Multiple selection uses `toolbar` and `button` roles with pressed state. Enter, Space release, mouse click, and accessibility Click toggle selection through state. `disallowEmptySelection` prevents clearing the last selection. Controlled requests follow the parent, including rejected requests.
+
+The group has one Tab stop, initially its first enabled item. Arrows move focus without selecting, stop at the ends, and skip disabled items. Horizontal groups use Left and Right with locale direction; vertical groups use Up and Down. Tab leaves the group and reentry returns to its last focused enabled item. Group and item disabled guards combine. Item readonly blocks selection while keeping focus. Mounted items register and unregister with their owners. Nested toolbars and arbitrary focusable children are outside this subset. See the [contract and native evidence](PORTING.md#togglebuttongroup-stage).
+
 ## Radio groups
 
 Call `createRadioGroup(props, state, ref)` before `createRadio(props, state, ref)` for each option. Both use the same `RadioGroupState` from `gpuix-solid2-stately`. Spread `radioGroupProps` onto the containing native `div` and each radio's `inputProps` onto a native descendant. Radio values must be unique within the group. Mounted options register and dispose with their owners.
@@ -98,3 +120,5 @@ bun run check:native
 In a graphical session, run `bun run test:native`. It drives the real GPUI renderer through native mouse and key simulation. On a bare Xvfb session, set `GPUIX_ARIA_XDOTOOL` to an `xdotool` executable so the fixture can focus its window. Set `GPUIX_ARIA_INSPECT=1` to retain the window for 60 seconds. With an enabled AT-SPI bus and `python3-dbus`, run `python3 scripts/check-atspi.py` during that interval. It verifies OS click actions and records backend state gaps. [Observed accessibility results](docs/native-accessibility.json) came from this session.
 
 Run `bun run test:native:checkbox-group` for checkbox-group mouse, keyboard, controlled state, and native Tab checks. For OS checks, run it with `GPUIX_ARIA_INSPECT=1`, then run `python3 scripts/check-checkbox-group-atspi.py` during its inspection interval with `python3-dbus` and `AT_SPI_BUS_ADDRESS`. Set `GPUIX_ARIA_AUDIT_OUTPUT` to write the results to JSON. The checker acts only on the named verification window; the fixture asserts the resulting Solid state before exiting.
+
+Run `bun run test:native:toggle-button-group` for single and multiple selection, native Tab exit and reentry, arrow focus, orientation, RTL, and controlled rejection. For OS checks, run it with `GPUIX_ARIA_INSPECT=1`, then run `python3 scripts/check-toggle-button-group-atspi.py` during its inspection interval using the same AT-SPI environment. Set `GPUIX_ARIA_AUDIT_OUTPUT` to record the audit. The fixture verifies that OS actions changed both groups' Solid state before exiting.

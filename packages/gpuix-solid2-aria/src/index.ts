@@ -9,6 +9,8 @@ export * from "./checkbox-group.js";
 
 export * from "./radio.js";
 
+export * from "./toggle-button-group.js";
+
 export * from "./focus.js";
 
 export * from "./overlays.js";

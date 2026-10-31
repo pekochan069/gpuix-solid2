@@ -146,14 +146,14 @@ try {
   );
 
   await Promise.all(
-    ["filter", "checkbox-group"].map(async (name) => {
+    ["filter", "checkbox-group", "toggle-button-group"].map(async (name) => {
       const original = await readFile(
         path.join(root, `src/${name}.ts`),
         "utf-8"
       );
 
       const [notice = ""] = original.split("\nimport ");
-      assert.ok(notice.includes("Copyright 2020 Adobe"));
+      assert.match(notice, /Copyright 20\d\d Adobe/u);
 
       await Promise.all(
         ["js", "d.ts"].map(async (extension) => {

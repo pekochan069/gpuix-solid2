@@ -38,11 +38,11 @@
     },
     "createToggleButtonGroup": {
       "source": "button/create-toggle-button-group",
-      "status": "deferred"
+      "status": "native-subset"
     },
     "createToggleButtonGroupItem": {
       "source": "button/create-toggle-button-group",
-      "status": "deferred"
+      "status": "native-subset"
     },
     "createCalendar": {
       "source": "calendar/create-calendar",

@@ -9,10 +9,13 @@ import {
   createCheckboxGroupItem,
   createKeyboard,
   createLocale,
+  createToggleButtonGroup,
+  createToggleButtonGroupItem,
 } from "gpuix-solid2-aria";
 import {
   createCheckboxGroupState,
   createToggleState,
+  createToggleGroupState,
 } from "gpuix-solid2-stately";
 import { jsx } from "gpuix-solid2/jsx-runtime";
 import { merge } from "solid-js";
@@ -29,6 +32,8 @@ assert.throws(() => import.meta.resolve("@solid2-aria/core"));
 let check!: HostElement;
 let button!: HostElement;
 let groupItem!: HostElement;
+let toggleGroup!: HostElement;
+let toggleItem!: HostElement;
 let selected = () => false;
 let count = 0;
 let key = "";
@@ -71,7 +76,39 @@ try {
       () => groupItem
     );
 
+    const toggleGroupState = createToggleGroupState({
+      defaultSelectedKeys: [1],
+    });
+
+    const toggles = createToggleButtonGroup(
+      { "aria-label": "Alignment" },
+      toggleGroupState,
+      () => toggleGroup
+    );
+
+    const toggle = createToggleButtonGroupItem(
+      { id: 1 },
+      toggleGroupState,
+      () => toggleItem
+    );
+
     return [
+      jsx(
+        "div",
+        merge(toggles.groupProps, {
+          children: jsx(
+            "div",
+            merge(toggle.buttonProps, {
+              ref: (node: HostElement) => {
+                toggleItem = node;
+              },
+            })
+          ),
+          ref: (node: HostElement) => {
+            toggleGroup = node;
+          },
+        })
+      ),
       jsx(
         "div",
         merge(group.groupProps, {
@@ -115,6 +152,15 @@ try {
   app.dispatch({ elementId: groupItem.id, eventType: "keyDown", key: "space" });
   app.dispatch({ elementId: groupItem.id, eventType: "keyUp", key: "space" });
   assert.equal(groupItem.props.get("aria-checked"), false);
+  assert.equal(toggleGroup.props.get("role"), "radiogroup");
+  assert.equal(toggleItem.props.get("aria-checked"), true);
+  app.dispatch({
+    elementId: toggleItem.id,
+    eventType: "keyDown",
+    key: "enter",
+  });
+  app.dispatch({ elementId: toggleItem.id, eventType: "keyUp", key: "enter" });
+  assert.equal(toggleItem.props.get("aria-checked"), false);
   console.log(
     "Compiled native consumer passed without browser globals, @solidjs/web, or upstream SSR."
   );
