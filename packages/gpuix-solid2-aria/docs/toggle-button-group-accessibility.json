@@ -1,0 +1,28 @@
+{
+  "platform": "Linux WSLg X11, GPUIX 0.11.0, AT-SPI",
+  "roles_and_names": {
+    "Alignment": 39,
+    "Left": 44,
+    "Right": 44,
+    "Unavailable": 44,
+    "Formatting": 63,
+    "Bold": 43,
+    "Italic": 43
+  },
+  "click_updates_controlled_single_selection": true,
+  "click_updates_multiple_selection": true,
+  "disabled_click_preserves_selection": true,
+  "checked_state_exposed": false,
+  "pressed_state_exposed": false,
+  "disabled_reported_enabled": true,
+  "native_states": {
+    "Alignment": [1124073728, 0],
+    "Left": [1124075776, 0],
+    "Right": [1124075776, 0],
+    "Unavailable": [1124075776, 0],
+    "Formatting": [1124073728, 0],
+    "Bold": [1124075776, 0],
+    "Italic": [1124075776, 0]
+  },
+  "item_relationships": []
+}
