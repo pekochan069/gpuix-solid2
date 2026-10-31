@@ -35,6 +35,15 @@ and conditional panel mounting instead of DOM visibility and animation.
 Original copyright and derivation notices ship in source, JavaScript,
 and declarations. See LICENSES/Apache-2.0.txt.
 
+src/tabs.ts derives from Solid Aria's tabs/create-tab-list.ts,
+create-tab.ts, create-tab-panel.ts, and tabs-keyboard-delegate.ts,
+based on Adobe React Spectrum's tabs hooks (Copyright 2020 Adobe).
+Modifications for GPUIX: native events, mounted tab registration, native
+focus and scrolling, and conditional panels instead of DOM visibility
+and automatic tabbable-child detection. Original copyright and derivation
+notices ship in source, JavaScript, and declarations.
+See LICENSES/Apache-2.0.txt.
+
 The upstream notice and original React Spectrum notice are preserved
 verbatim in LICENSES/solid2-aria-NOTICE.txt and
 LICENSES/react-spectrum-NOTICE.txt. The MIT text is in LICENSE.

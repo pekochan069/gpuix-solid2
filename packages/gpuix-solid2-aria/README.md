@@ -1,6 +1,6 @@
 # gpuix-solid2-aria
 
-Native interaction behaviors for the Solid 2 GPUIX renderer. This is the native behavior subset of [issue #2](https://github.com/pekochan069/gpuix-solid2/issues/2). It covers buttons, disclosures, toggles, toggle button groups, checkboxes, checkbox groups, switches, radio groups, text fields, linear listboxes, focus, and overlay foundations. It does not provide full `@solid2-aria/core` parity or complete native accessibility. See [coverage and platform gaps](PORTING.md).
+Native interaction behaviors for the Solid 2 GPUIX renderer. This is the native behavior subset of [issue #2](https://github.com/pekochan069/gpuix-solid2/issues/2). It covers buttons, disclosures, tabs, toggles, toggle button groups, checkboxes, checkbox groups, switches, radio groups, text fields, linear listboxes, focus, and overlay foundations. It does not provide full `@solid2-aria/core` parity or complete native accessibility. See [coverage and platform gaps](PORTING.md).
 
 ## Render a native checkbox
 
@@ -88,6 +88,14 @@ function Details() {
 
 Enter and Space toggle on key-down. Mouse and OS Click toggle through state, including controlled parents that reject requests. Disabled triggers reject activation and are skipped by Tab. Panel contents are recreated after collapse. Supply direct labels for the trigger and panel. The published backend omits expanded state and relationships in the observed OS tree. See the [Disclosure contract and evidence](PORTING.md#disclosure-stage).
 
+## Tabs
+
+Call `createTabList(props, state, ref)` before `createTab({ key, ...props }, state, ref)` and `createTabPanel(props, state)` from `gpuix-solid2-aria/tabs`. Use one `TabListState` from `gpuix-solid2-stately` per list. Spread `tabListProps` onto the list container, `tabProps` onto each native tab, and `tabPanelProps` onto its panel. Tab keys are unique string or number collection keys. Render the tabs in collection order within the list container.
+
+Arrows wrap and skip disabled tabs. Left and Right follow locale direction; vertical lists also handle Up and Down. Home and End move to the first and last enabled tabs. Arrows select automatically unless `keyboardActivation` is `"manual"`, which changes only focus until Enter or Space selects. Mouse-down and keyboard-down select once; OS Click uses the same state request path. Controlled parents may reject requests. Group, collection, and local disabled guards combine.
+
+Mount only the selected panel. Use a keyed `For` over `state.selectedKey === null ? [] : [state.selectedKey]` to recreate the panel and its local state on selection changes, including numeric key `0`. The panel's optional `id` is its collection key and defaults to the selected key. Its default `tabIndex` is `0`; set it to `-1` when the panel contains its own Tab stops. Tabbable-child detection, retained inactive panels, and browser links are outside this native subset. Supply direct labels because the backend does not expose relationships. See the [native fixture](fixtures/tabs-native.ts) and [Tabs contract and evidence](PORTING.md#tabs-stage).
+
 ## Checkbox groups
 
 Use `createCheckboxGroup(props, state)` and `createCheckboxGroupItem(props, state, ref)` from `gpuix-solid2-aria/checkbox-group` with one `CheckboxGroupState` from `gpuix-solid2-stately`. Spread `groupProps` onto the containing native `div` and each item's `inputProps` onto a native checkbox surface. Give each item a unique string `value` and a direct `aria-label`.
@@ -166,3 +174,5 @@ Run `bun run test:native:checkbox-group` for checkbox-group mouse, keyboard, con
 Run `bun run test:native:toggle-button-group` for single and multiple selection, native Tab exit and reentry, arrow focus, orientation, RTL, and controlled rejection. For OS checks, run it with `GPUIX_ARIA_INSPECT=1`, then run `python3 scripts/check-toggle-button-group-atspi.py` during its inspection interval using the same AT-SPI environment. Set `GPUIX_ARIA_AUDIT_OUTPUT` to record the audit. The fixture verifies that OS actions changed both groups' Solid state before exiting.
 
 Run `bun run test:native:disclosure` for expansion, native Tab traversal, panel unmounting, controlled rejection, and disabled guards. With `GPUIX_ARIA_INSPECT=1`, run `python3 scripts/check-disclosure-atspi.py` during the inspection interval in the same AT-SPI environment. Set `GPUIX_ARIA_AUDIT_OUTPUT` to record the audit. The checker expands and collapses the panel through OS Click, checks its presence in the OS tree, and records the missing expanded state and relationships.
+
+Run `bun run test:native:tabs` for automatic and manual activation, wrapping, disabled skipping, RTL, orientation, native Tab traversal, conditional panels, and controlled rejection. With `GPUIX_ARIA_INSPECT=1`, run `python3 scripts/check-tabs-atspi.py` during its inspection interval in the same AT-SPI environment. Set `GPUIX_ARIA_AUDIT_OUTPUT` to record the audit. The checker changes selection through OS Click, verifies inactive panels leave the OS tree, and records selected state, roles, and missing relationships.

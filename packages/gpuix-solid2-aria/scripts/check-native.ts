@@ -146,33 +146,37 @@ try {
   );
 
   await Promise.all(
-    ["filter", "checkbox-group", "toggle-button-group", "disclosure"].map(
-      async (name) => {
-        const original = await readFile(
-          path.join(root, `src/${name}.ts`),
-          "utf-8"
-        );
+    [
+      "filter",
+      "checkbox-group",
+      "toggle-button-group",
+      "disclosure",
+      "tabs",
+    ].map(async (name) => {
+      const original = await readFile(
+        path.join(root, `src/${name}.ts`),
+        "utf-8"
+      );
 
-        const [notice = ""] = original.split("\nimport ");
-        assert.match(notice, /Copyright 20\d\d Adobe/u);
+      const [notice = ""] = original.split("\nimport ");
+      assert.match(notice, /Copyright 20\d\d Adobe/u);
 
-        await Promise.all(
-          ["js", "d.ts"].map(async (extension) => {
-            const file = `${name}.${extension}`;
+      await Promise.all(
+        ["js", "d.ts"].map(async (extension) => {
+          const file = `${name}.${extension}`;
 
-            const emitted = await readFile(
-              path.join(consumer, "node_modules/gpuix-solid2-aria/dist", file),
-              "utf-8"
-            );
+          const emitted = await readFile(
+            path.join(consumer, "node_modules/gpuix-solid2-aria/dist", file),
+            "utf-8"
+          );
 
-            assert.ok(
-              emitted.startsWith(notice),
-              `Missing original notice in ${file}`
-            );
-          })
-        );
-      }
-    )
+          assert.ok(
+            emitted.startsWith(notice),
+            `Missing original notice in ${file}`
+          );
+        })
+      );
+    })
   );
   console.log(
     `Checked ${modules.length} native declarations without lib.dom and verified packaged license texts.`

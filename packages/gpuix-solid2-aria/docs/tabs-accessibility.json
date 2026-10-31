@@ -1,0 +1,29 @@
+{
+  "platform": "Linux WSLg X11, GPUIX 0.11.0, AT-SPI",
+  "roles_and_names": {
+    "Workspace tabs": {
+      "role": 38
+    },
+    "Overview": {
+      "role": 37
+    },
+    "Settings": {
+      "role": 37
+    },
+    "Unavailable": {
+      "role": 37
+    },
+    "Settings panel": {
+      "role": 49
+    }
+  },
+  "os_click_updates_controlled_selection": true,
+  "inactive_panels_removed_from_os_tree": true,
+  "disabled_click_preserves_selection": true,
+  "unselected_native_states": [1128270080, 0],
+  "selected_native_states": [1136658688, 0],
+  "selected_state_exposed": true,
+  "disabled_reported_enabled": true,
+  "tab_relationships": [],
+  "panel_relationships": []
+}

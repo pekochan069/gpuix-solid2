@@ -7,6 +7,8 @@ export * from "./controls.js";
 
 export * from "./disclosure.js";
 
+export * from "./tabs.js";
+
 export * from "./checkbox-group.js";
 
 export * from "./radio.js";

@@ -10,14 +10,19 @@ import {
   createDisclosure,
   createKeyboard,
   createLocale,
+  createTab,
+  createTabList,
+  createTabPanel,
   createToggleButtonGroup,
   createToggleButtonGroupItem,
 } from "gpuix-solid2-aria";
 import {
   createCheckboxGroupState,
   createDisclosureState,
+  createTabListState,
   createToggleState,
   createToggleGroupState,
+  Item,
 } from "gpuix-solid2-stately";
 import { jsx } from "gpuix-solid2/jsx-runtime";
 import { merge } from "solid-js";
@@ -37,6 +42,9 @@ let groupItem!: HostElement;
 let toggleGroup!: HostElement;
 let toggleItem!: HostElement;
 let disclosureTrigger!: HostElement;
+let tabList!: HostElement;
+let tabPanel!: HostElement;
+const tabNodes = new Map<number, HostElement>();
 let selected = () => false;
 let count = 0;
 let key = "";
@@ -101,7 +109,52 @@ try {
       () => toggleItem
     );
 
+    const tabState = createTabListState({
+      children: (entry: { id: number }) =>
+        Item({
+          children: String(entry.id),
+          key: entry.id,
+          textValue: String(entry.id),
+        }),
+      items: [{ id: 0 }, { id: 1 }],
+    });
+
+    const tabs = createTabList({}, tabState, () => tabList);
+    const panel = createTabPanel({}, tabState);
+
     return [
+      jsx(
+        "div",
+        merge(tabs.tabListProps, {
+          children: [0, 1].map((tabKey) => {
+            const tab = createTab(
+              { key: tabKey },
+              tabState,
+              () => tabNodes.get(tabKey) ?? null
+            );
+
+            return jsx(
+              "div",
+              merge(tab.tabProps, {
+                ref: (node: HostElement) => {
+                  tabNodes.set(tabKey, node);
+                },
+              })
+            );
+          }),
+          ref: (node: HostElement) => {
+            tabList = node;
+          },
+        })
+      ),
+      jsx(
+        "div",
+        merge(panel.tabPanelProps, {
+          ref: (node: HostElement) => {
+            tabPanel = node;
+          },
+        })
+      ),
       jsx(
         "div",
         merge(disclosure.buttonProps, {
@@ -191,6 +244,20 @@ try {
   });
   app.dispatch({ elementId: disclosureTrigger.id, eventType: "click" });
   assert.equal(disclosureTrigger.props.get("aria-expanded"), false);
+  const firstTab = tabNodes.get(0);
+  const secondTab = tabNodes.get(1);
+  assert.ok(firstTab && secondTab);
+  assert.equal(firstTab.props.get("aria-selected"), true);
+  app.dispatch({ elementId: firstTab.id, eventType: "keyDown", key: "right" });
+  assert.equal(secondTab.props.get("aria-selected"), true);
+  assert.equal(
+    tabPanel.props.get("aria-id"),
+    secondTab.props.get("aria-controls")
+  );
+  assert.equal(
+    tabPanel.props.get("aria-labelledby"),
+    secondTab.props.get("aria-id")
+  );
   console.log(
     "Compiled native consumer passed without browser globals, @solidjs/web, or upstream SSR."
   );

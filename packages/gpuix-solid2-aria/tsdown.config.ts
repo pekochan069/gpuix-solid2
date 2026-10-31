@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 import { defineConfig } from "tsdown";
 
 const notices = new Map(
-  ["filter", "checkbox-group", "toggle-button-group", "disclosure"].map(
+  ["filter", "checkbox-group", "toggle-button-group", "disclosure", "tabs"].map(
     (name) => [
       name,
       readFileSync(new URL(`src/${name}.ts`, import.meta.url), "utf-8").split(
