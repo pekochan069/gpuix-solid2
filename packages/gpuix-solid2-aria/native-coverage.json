@@ -78,11 +78,11 @@
     },
     "createCheckboxGroup": {
       "source": "checkbox/create-checkbox-group",
-      "status": "deferred"
+      "status": "native-subset"
     },
     "createCheckboxGroupItem": {
       "source": "checkbox/create-checkbox-group-item",
-      "status": "deferred"
+      "status": "native-subset"
     },
     "createColorArea": {
       "source": "color/create-color-area",

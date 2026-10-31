@@ -11,6 +11,7 @@ This stage adds a native API with GPUIX event and element types. It is not a dro
 | Interactions | Press, hover, keyboard, focus, focus ring, outside interaction | Mouse and keyboard only. Enter presses on key-down; Space presses on key-up. Repeats, disabled input, blur cancellation, and owner cleanup are covered. Pointer exit cancels mouse presses; reentry does not restart them. Touch, pen, long press, move, drag sessions, and focus-within are deferred. |
 | Button and toggle | `createButton`, `createToggleButton` | Native `div` surface; no HTML form or link behavior. Uses the application's `ToggleState`. |
 | Checkbox and switch | `createCheckbox`, `createSwitch` | Reactive state, readonly and disabled guards, Space activation, semantic props. Native accessibility state support remains blocked below. |
+| Checkbox group | `createCheckboxGroup`, `createCheckboxGroupItem` | Multiple selection through shared state, controlled requests, independent Tab stops, group and item disabled/readonly guards, and group validation results. No group focus-within, label relationships, per-item validation aggregation, or forms. |
 | Radio | `createRadioGroup`, `createRadio` | State-backed selection, Space and mouse activation, one group Tab stop, wrapping arrow navigation in native tree order, disabled skipping, and horizontal RTL. Readonly groups allow focus navigation while keeping selection. No form, label relationship, or focus-within adapter. |
 | Text field | `createTextField` | Controlled and uncontrolled strings, editor change and submit, readonly and disabled edits. No HTML form validation or password input. Controlled change requests preserve the external Solid value; the backend does not roll back native edits when the parent rejects an edit without changing its value prop. |
 | Focus | `createFocusScope`, `createFocusManager` | Native Tab traversal, containment, and restoration for mounted native subtrees. Browser FocusScope components and portals are deferred. |
@@ -19,13 +20,13 @@ This stage adds a native API with GPUIX event and element types. It is not a dro
 | Overlays | `createOverlay`, `createOverlayPosition` | Native stack, nested Escape dismissal, outside mouse-down, modal Tab containment, focus restoration, and native anchoring. No DOM portals or body-scroll locking. Nesting is established through the native host tree. |
 | Locale | Provider, locale and direction, collator, date, number and list formatting, filter | Explicit `en-US` default and reactive overrides. No browser locale detection. Localized widget dictionaries remain part of later widget ports. |
 
-Fresh native modules use the source API as a design reference. The filter implementation is derived from upstream and retains its Adobe notice. Complete license texts and upstream notices ship with the package.
+Fresh native modules use the source API as a design reference. The filter and checkbox-group implementations are derived from upstream and retain their Adobe notices in source and build outputs. Complete license texts and upstream notices ship with the package.
 
 ## Remaining control stages
 
 | Modules still deferred | Required next work |
 | --- | --- |
-| Checkbox groups, toggle groups, search and number fields, select, combobox, autocomplete | Compose native fields and collection behavior with state; implement group focus, validation, and trigger relationships. |
+| Toggle groups, search and number fields, select, combobox, autocomplete | Compose native fields and collection behavior with state; implement group focus, validation, and trigger relationships. |
 | Menu, submenu, tabs, toolbar, disclosure, breadcrumbs, link, separator, meter, progress | Add widget adapters and test their keyboard contracts. Native state for many of these is already available in `gpuix-solid2-stately`. |
 | Calendar, date and time fields, date picker, color, slider | Native segmented editing, pointer gestures, geometry, and accessible numeric actions and values. |
 | Gridlist, grid, table, tree, virtualizer | Spatial keyboard delegates, measured layouts, row and cell relationships, virtual accessibility nodes, and collection focus across reuse. |
@@ -67,3 +68,15 @@ The missing mappings require changes in the shared GPUIX JS host, native Rust ba
 The selected enabled option is the sole Tab stop. If it is absent or disabled, the last focused enabled option or first registered enabled option becomes the Tab stop. An empty or fully disabled group has no Tab stop. Left, Right, Up, and Down wrap and skip disabled options. Horizontal Left and Right follow the locale direction; Up and Down keep their order. Enter does not select. Mouse and Space request selection through state, including controlled parents that reject requests.
 
 [RadioGroup OS results](../gpuix-solid2-aria-components/docs/radio-accessibility.json) verify radio roles, direct names and descriptions, and Click actions in the native component fixture. GPUIX maps the group to an AT-SPI panel, omits checked and disabled state, and supplies no radio relationships. These backend gaps keep issue #2 open.
+
+## CheckboxGroup stage
+
+`createCheckboxGroup(props, state)` supplies `groupProps` for a native container. `createCheckboxGroupItem({ value, ...props }, state, ref)` supplies `inputProps`, `isSelected`, `isDisabled`, `isReadOnly`, and `isPressed` for each native checkbox surface. Both use the same `CheckboxGroupState`. Item values must be unique within the group.
+
+Space on release, mouse click, and accessibility Click toggle that item's value through state. Enter does not toggle. Enabled items are independent Tab stops in native tree order; disabled items are skipped. Readonly items remain focusable. Group disabled and readonly guards combine with item guards, so a local `false` cannot enable a blocked group item. Controlled parents may accept or reject selection requests without changing the checkbox's external value. Defaults initialize selection once. Items do not register shared resources, and their press handlers dispose with their owners.
+
+Group `validate` and `isInvalid` belong to state. The behavior exposes its displayed validation errors and details, and combines group and local invalid flags on items. Required state follows the group's empty selection unless the item overrides it. Native form submission, reset, browser constraint validation, per-item validation aggregation, group focus-within callbacks, and label/error relationships are outside this subset.
+
+The focused behavior tests cover multiple selection, mouse and Space activation, controlled acceptance and rejection, reactive values and guards, required and invalid state, blur cancellation, and unmount cleanup. The packed native consumer exercises the exported group behavior without browser globals or `lib.dom` and verifies that Adobe notices survive JavaScript and declaration builds.
+
+`bun run test:native:checkbox-group` passed against the production GPUI renderer in a Linux WSLg graphical session. It verifies measured hit testing, mouse and keyboard selection, independent Tab stops, disabled skipping, readonly guards, and controlled request rejection. The [live AT-SPI results](docs/checkbox-group-accessibility.json) verify checkbox roles, direct names and descriptions, and OS Click updating controlled Solid state while disabled Click preserves selection. GPUIX maps the group to a panel and omits checked state and relationships; disabled checkboxes still report enabled. The [captured verification window](docs/checkbox-group-verification.png) shows both enabled items selected after the OS actions. These backend gaps keep issue #2 open.

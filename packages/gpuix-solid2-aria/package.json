@@ -35,6 +35,7 @@
     "test": "bun test --preload gpuix-solid2/preload test",
     "check:native": "bun run build && bun scripts/check-native.ts",
     "test:native": "bun --preload gpuix-solid2/preload fixtures/native.ts",
+    "test:native:checkbox-group": "bun --preload gpuix-solid2/preload fixtures/checkbox-group-native.ts",
     "prepack": "bun run build"
   },
   "dependencies": {

@@ -1,6 +1,6 @@
 # gpuix-solid2-aria
 
-Native interaction behaviors for the Solid 2 GPUIX renderer. This is the native behavior subset of [issue #2](https://github.com/pekochan069/gpuix-solid2/issues/2). It covers buttons, toggles, checkboxes, switches, radio groups, text fields, linear listboxes, focus, and overlay foundations. It does not provide full `@solid2-aria/core` parity or complete native accessibility. See [coverage and platform gaps](PORTING.md).
+Native interaction behaviors for the Solid 2 GPUIX renderer. This is the native behavior subset of [issue #2](https://github.com/pekochan069/gpuix-solid2/issues/2). It covers buttons, toggles, checkboxes, checkbox groups, switches, radio groups, text fields, linear listboxes, focus, and overlay foundations. It does not provide full `@solid2-aria/core` parity or complete native accessibility. See [coverage and platform gaps](PORTING.md).
 
 ## Render a native checkbox
 
@@ -46,6 +46,24 @@ Behavior props use reactive property getters. Keep the returned object intact; d
 
 `createButton`, `createToggleButton`, `createCheckbox`, `createSwitch`, and `createPress` take a `() => HostElement | null` ref. `createToggleButton`, `createCheckbox`, and `createSwitch` also take `ToggleState` from `gpuix-solid2-stately`. `createTextField` returns native editor `inputProps` and `value`. Controlled inputs report change requests. Rejected edits require a native editor reset contract that GPUIX 0.11.0 does not expose; see the porting audit before using this pattern for input validation.
 
+## Checkbox groups
+
+Use `createCheckboxGroup(props, state)` and `createCheckboxGroupItem(props, state, ref)` from `gpuix-solid2-aria/checkbox-group` with one `CheckboxGroupState` from `gpuix-solid2-stately`. Spread `groupProps` onto the containing native `div` and each item's `inputProps` onto a native checkbox surface. Give each item a unique string `value` and a direct `aria-label`.
+
+```ts
+const state = createCheckboxGroupState({ defaultValue: ["news"] });
+const group = createCheckboxGroup({ "aria-label": "Topics" }, state);
+const news = createCheckboxGroupItem(
+  { value: "news", "aria-label": "News" },
+  state,
+  () => newsElement
+);
+```
+
+Space and mouse activation toggle only that item's value. Each enabled item has its own Tab stop. Enter and arrow keys do not select items. Group disabled and readonly state applies to all items, including items that explicitly pass `false`; readonly items remain focusable. Item `onChange` receives the requested boolean after the group's selection request. Controlled groups follow the parent's `value`, including rejected requests. Keep reactive props as getters when calling these functions directly.
+
+The group exposes `isInvalid`, `validationErrors`, and `validationDetails` from state. Item invalid state combines group and item flags. Group required state applies while the selection is empty, unless an item supplies its own `isRequired`. Group focus-within, label relationships, per-item validation aggregation, and native forms remain deferred. See the [CheckboxGroup contract and native evidence](PORTING.md#checkboxgroup-stage).
+
 ## Radio groups
 
 Call `createRadioGroup(props, state, ref)` before `createRadio(props, state, ref)` for each option. Both use the same `RadioGroupState` from `gpuix-solid2-stately`. Spread `radioGroupProps` onto the containing native `div` and each radio's `inputProps` onto a native descendant. Radio values must be unique within the group. Mounted options register and dispose with their owners.
@@ -78,3 +96,5 @@ bun run check:native
 `check:native` packs and installs all three native packages into an isolated consumer, checks declarations without `lib.dom`, compiles the consumer with the Solid client runtime, runs it in Bun, and compares packaged licenses. Application builds must bundle Solid and its subpaths consistently. The script contains a working tsdown configuration.
 
 In a graphical session, run `bun run test:native`. It drives the real GPUI renderer through native mouse and key simulation. On a bare Xvfb session, set `GPUIX_ARIA_XDOTOOL` to an `xdotool` executable so the fixture can focus its window. Set `GPUIX_ARIA_INSPECT=1` to retain the window for 60 seconds. With an enabled AT-SPI bus and `python3-dbus`, run `python3 scripts/check-atspi.py` during that interval. It verifies OS click actions and records backend state gaps. [Observed accessibility results](docs/native-accessibility.json) came from this session.
+
+Run `bun run test:native:checkbox-group` for checkbox-group mouse, keyboard, controlled state, and native Tab checks. For OS checks, run it with `GPUIX_ARIA_INSPECT=1`, then run `python3 scripts/check-checkbox-group-atspi.py` during its inspection interval with `python3-dbus` and `AT_SPI_BUS_ADDRESS`. Set `GPUIX_ARIA_AUDIT_OUTPUT` to write the results to JSON. The checker acts only on the named verification window; the fixture asserts the resulting Solid state before exiting.

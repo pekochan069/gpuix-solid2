@@ -5,10 +5,15 @@ import type { HostElement, NativeRenderer } from "gpuix-solid2";
 import {
   createButton,
   createCheckbox,
+  createCheckboxGroup,
+  createCheckboxGroupItem,
   createKeyboard,
   createLocale,
 } from "gpuix-solid2-aria";
-import { createToggleState } from "gpuix-solid2-stately";
+import {
+  createCheckboxGroupState,
+  createToggleState,
+} from "gpuix-solid2-stately";
 import { jsx } from "gpuix-solid2/jsx-runtime";
 import { merge } from "solid-js";
 
@@ -23,6 +28,7 @@ assert.throws(() => import.meta.resolve("@solid2-aria/core"));
 
 let check!: HostElement;
 let button!: HostElement;
+let groupItem!: HostElement;
 let selected = () => false;
 let count = 0;
 let key = "";
@@ -56,8 +62,29 @@ try {
 
     selected = () => state.isSelected;
     assert.equal(createLocale().locale, "en-US");
+    const groupState = createCheckboxGroupState({ defaultValue: ["news"] });
+    const group = createCheckboxGroup({ "aria-label": "Topics" }, groupState);
+
+    const item = createCheckboxGroupItem(
+      { value: "news" },
+      groupState,
+      () => groupItem
+    );
 
     return [
+      jsx(
+        "div",
+        merge(group.groupProps, {
+          children: jsx(
+            "div",
+            merge(item.inputProps, {
+              ref: (node: HostElement) => {
+                groupItem = node;
+              },
+            })
+          ),
+        })
+      ),
       jsx(
         "div",
         merge(checkbox.inputProps, {
@@ -84,6 +111,10 @@ try {
   assert.equal(count, 1);
   app.dispatch({ elementId: button.id, eventType: "keyDown", key: "down" });
   assert.equal(key, "ArrowDown");
+  assert.equal(groupItem.props.get("aria-checked"), true);
+  app.dispatch({ elementId: groupItem.id, eventType: "keyDown", key: "space" });
+  app.dispatch({ elementId: groupItem.id, eventType: "keyUp", key: "space" });
+  assert.equal(groupItem.props.get("aria-checked"), false);
   console.log(
     "Compiled native consumer passed without browser globals, @solidjs/web, or upstream SSR."
   );
