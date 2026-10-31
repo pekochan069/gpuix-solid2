@@ -1,6 +1,6 @@
 # gpuix-solid2-aria
 
-Native interaction behaviors for the Solid 2 GPUIX renderer. This is the native behavior subset of [issue #2](https://github.com/pekochan069/gpuix-solid2/issues/2). It covers buttons, toggles, toggle button groups, checkboxes, checkbox groups, switches, radio groups, text fields, linear listboxes, focus, and overlay foundations. It does not provide full `@solid2-aria/core` parity or complete native accessibility. See [coverage and platform gaps](PORTING.md).
+Native interaction behaviors for the Solid 2 GPUIX renderer. This is the native behavior subset of [issue #2](https://github.com/pekochan069/gpuix-solid2/issues/2). It covers buttons, disclosures, toggles, toggle button groups, checkboxes, checkbox groups, switches, radio groups, text fields, linear listboxes, focus, and overlay foundations. It does not provide full `@solid2-aria/core` parity or complete native accessibility. See [coverage and platform gaps](PORTING.md).
 
 ## Render a native checkbox
 
@@ -45,6 +45,48 @@ Set `jsxImportSource` to `gpuix-solid2`. Use a native `div` for a checkbox surfa
 Behavior props use reactive property getters. Keep the returned object intact; destructuring a state getter takes a snapshot. Compose callbacks explicitly when behaviors handle the same event. Solid's `merge` overwrites a duplicate handler; it does not chain handlers.
 
 `createButton`, `createToggleButton`, `createCheckbox`, `createSwitch`, and `createPress` take a `() => HostElement | null` ref. `createToggleButton`, `createCheckbox`, and `createSwitch` also take `ToggleState` from `gpuix-solid2-stately`. `createTextField` returns native editor `inputProps` and `value`. Controlled inputs report change requests. Rejected edits require a native editor reset contract that GPUIX 0.11.0 does not expose; see the porting audit before using this pattern for input validation.
+
+## Disclosures
+
+Use `createDisclosure(props, state, triggerRef)` from `gpuix-solid2-aria/disclosure` with `DisclosureState` from `gpuix-solid2-stately`. Spread `buttonProps` onto the trigger and use `Show` to mount the panel only while expanded. Collapsed content must unmount so its children leave native Tab traversal and the OS accessibility tree.
+
+```tsx
+import type { HostElement } from "gpuix-solid2";
+import { createDisclosure } from "gpuix-solid2-aria";
+import { createDisclosureState } from "gpuix-solid2-stately";
+import { Show } from "solid-js";
+
+function Details() {
+  let trigger: HostElement | null = null;
+  const state = createDisclosureState({});
+  const behavior = createDisclosure(
+    { "aria-label": "Details" },
+    state,
+    () => trigger
+  );
+  return (
+    <>
+      <div
+        {...behavior.buttonProps}
+        ref={(node) => {
+          trigger = node;
+        }}
+      >
+        Details
+      </div>
+      <Show when={behavior.isExpanded}>
+        {() => (
+          <div {...behavior.panelProps} aria-label="Detail panel">
+            Panel content
+          </div>
+        )}
+      </Show>
+    </>
+  );
+}
+```
+
+Enter and Space toggle on key-down. Mouse and OS Click toggle through state, including controlled parents that reject requests. Disabled triggers reject activation and are skipped by Tab. Panel contents are recreated after collapse. Supply direct labels for the trigger and panel. The published backend omits expanded state and relationships in the observed OS tree. See the [Disclosure contract and evidence](PORTING.md#disclosure-stage).
 
 ## Checkbox groups
 
@@ -122,3 +164,5 @@ In a graphical session, run `bun run test:native`. It drives the real GPUI rende
 Run `bun run test:native:checkbox-group` for checkbox-group mouse, keyboard, controlled state, and native Tab checks. For OS checks, run it with `GPUIX_ARIA_INSPECT=1`, then run `python3 scripts/check-checkbox-group-atspi.py` during its inspection interval with `python3-dbus` and `AT_SPI_BUS_ADDRESS`. Set `GPUIX_ARIA_AUDIT_OUTPUT` to write the results to JSON. The checker acts only on the named verification window; the fixture asserts the resulting Solid state before exiting.
 
 Run `bun run test:native:toggle-button-group` for single and multiple selection, native Tab exit and reentry, arrow focus, orientation, RTL, and controlled rejection. For OS checks, run it with `GPUIX_ARIA_INSPECT=1`, then run `python3 scripts/check-toggle-button-group-atspi.py` during its inspection interval using the same AT-SPI environment. Set `GPUIX_ARIA_AUDIT_OUTPUT` to record the audit. The fixture verifies that OS actions changed both groups' Solid state before exiting.
+
+Run `bun run test:native:disclosure` for expansion, native Tab traversal, panel unmounting, controlled rejection, and disabled guards. With `GPUIX_ARIA_INSPECT=1`, run `python3 scripts/check-disclosure-atspi.py` during the inspection interval in the same AT-SPI environment. Set `GPUIX_ARIA_AUDIT_OUTPUT` to record the audit. The checker expands and collapses the panel through OS Click, checks its presence in the OS tree, and records the missing expanded state and relationships.

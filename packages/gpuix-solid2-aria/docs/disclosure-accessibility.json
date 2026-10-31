@@ -1,0 +1,18 @@
+{
+  "platform": "Linux WSLg X11, GPUIX 0.11.0, AT-SPI",
+  "roles_and_names": {
+    "Details": 43,
+    "Detail panel": 39,
+    "Panel action": 43,
+    "Unavailable details": 43
+  },
+  "os_click_updates_controlled_expansion": true,
+  "expanded_state_exposed": false,
+  "collapsed_native_states": [1124075776, 0],
+  "expanded_native_states": [1124075776, 0],
+  "collapsed_panel_and_children_removed_from_os_tree": true,
+  "disabled_click_preserves_collapsed_state": true,
+  "disabled_reported_enabled": true,
+  "trigger_relationships": [],
+  "panel_relationships": []
+}
