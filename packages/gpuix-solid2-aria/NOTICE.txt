@@ -58,6 +58,13 @@ application-localized buttons, and commit-time parsing without DOM input
 filtering, forms, or live regions. Original copyright and derivation notices
 ship in source, JavaScript, and declarations. See LICENSES/Apache-2.0.txt.
 
+src/menu.ts derives from Solid Aria's menu/create-menu.ts and create-menu-item.ts,
+based on Adobe React Spectrum's useMenu.ts and useMenuItem.ts
+(Copyright 2020 Adobe). Modifications for GPUIX: native item registration,
+focus, events and scrolling, explicit state, and direct labels instead of DOM
+queries and relationships. Original copyright and derivation notices ship
+in source, JavaScript, and declarations. See LICENSES/Apache-2.0.txt.
+
 The upstream notice and original React Spectrum notice are preserved
 verbatim in LICENSES/solid2-aria-NOTICE.txt and
 LICENSES/react-spectrum-NOTICE.txt. The MIT text is in LICENSE.

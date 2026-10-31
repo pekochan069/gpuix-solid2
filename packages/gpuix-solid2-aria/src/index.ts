@@ -9,6 +9,8 @@ export * from "./search-field.js";
 
 export * from "./number-field.js";
 
+export * from "./menu.js";
+
 export * from "./disclosure.js";
 
 export * from "./tabs.js";

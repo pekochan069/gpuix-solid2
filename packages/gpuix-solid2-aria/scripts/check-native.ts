@@ -154,6 +154,7 @@ try {
       "tabs",
       "search-field",
       "number-field",
+      "menu",
     ].map(async (name) => {
       const original = await readFile(
         path.join(root, `src/${name}.ts`),

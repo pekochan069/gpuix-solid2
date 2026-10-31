@@ -354,11 +354,11 @@
     },
     "createMenu": {
       "source": "menu/create-menu",
-      "status": "deferred"
+      "status": "native-subset"
     },
     "createMenuItem": {
       "source": "menu/create-menu-item",
-      "status": "deferred"
+      "status": "native-subset"
     },
     "createMenuSection": {
       "source": "menu/create-menu-section",
