@@ -14,6 +14,7 @@ const notices = new Map(
     "number-field",
     "menu",
     "menu-trigger",
+    "select",
   ].map((name) => [
     name,
     readFileSync(new URL(`src/${name}.ts`, import.meta.url), "utf-8").split(

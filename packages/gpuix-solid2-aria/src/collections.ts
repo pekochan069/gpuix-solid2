@@ -9,8 +9,9 @@ import type {
   Rect,
   Size,
 } from "gpuix-solid2-stately/shared-types";
-import { createEffect } from "solid-js";
+import { createEffect, untrack } from "solid-js";
 
+import type { NativeControlProps } from "./controls.js";
 import { createPress } from "./interactions.js";
 import { createNativeServices, normalizeKey } from "./native.js";
 import type { NativeRef } from "./native.js";
@@ -165,7 +166,10 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
 
 export const createListBox = <T>(
   props: {
+    "aria-id"?: string;
     "aria-label"?: string;
+    "aria-labelledby"?: string;
+    autoFocus?: boolean | "first" | "last";
     shouldSelectOnFocus?: boolean;
     shouldFocusWrap?: boolean;
   },
@@ -200,6 +204,29 @@ export const createListBox = <T>(
   };
 
   createEffect(
+    () => props.autoFocus,
+    (autoFocus) => {
+      if (autoFocus === undefined || autoFocus === false) {
+        return;
+      }
+
+      untrack(() => {
+        const selected = [...state.selectionManager.selectedKeys].find((key) =>
+          state.selectionManager.canSelectItem(key)
+        );
+
+        focusKey(
+          selected ??
+            (autoFocus === "last"
+              ? delegate.getLastKey()
+              : delegate.getFirstKey()),
+          false
+        );
+      });
+    }
+  );
+
+  createEffect(
     () => ({
       focused: state.selectionManager.isFocused,
       key: state.selectionManager.focusedKey,
@@ -214,10 +241,21 @@ export const createListBox = <T>(
 
   return {
     listBoxProps: {
+      get "aria-id"() {
+        return props["aria-id"];
+      },
       get "aria-label"() {
         return props["aria-label"];
       },
+      get "aria-labelledby"() {
+        return props["aria-labelledby"];
+      },
+      get "aria-multiselectable"() {
+        return state.selectionManager.selectionMode === "multiple";
+      },
       onFocus() {
+        state.selectionManager.setFocused(true);
+
         if (state.selectionManager.focusedKey === null) {
           focusKey(delegate.getFirstKey(), false);
         }
@@ -225,7 +263,12 @@ export const createListBox = <T>(
 
       // oxlint-disable-next-line complexity -- Exhaustive collection key dispatch with native modifier guards.
       onKeyDown(event) {
-        if (event.defaultPrevented) {
+        if (
+          event.defaultPrevented ||
+          event.modifiers?.ctrl === true ||
+          event.modifiers?.cmd === true ||
+          event.modifiers?.alt === true
+        ) {
           return;
         }
 
@@ -263,7 +306,7 @@ export const createListBox = <T>(
 
           case " ": {
             if (focused !== null) {
-              state.selectionManager.toggleSelection(focused);
+              state.selectionManager.select(focused);
             }
 
             event.preventDefault();
@@ -272,12 +315,7 @@ export const createListBox = <T>(
           }
 
           default: {
-            if (
-              key.length !== 1 ||
-              event.modifiers?.ctrl === true ||
-              event.modifiers?.cmd === true ||
-              event.modifiers?.alt === true
-            ) {
+            if (key.length !== 1) {
               return;
             }
 
@@ -302,7 +340,7 @@ export const createListBox = <T>(
       get tabIndex() {
         return state.selectionManager.focusedKey === null ? 0 : -1;
       },
-    } satisfies HostProps,
+    } satisfies NativeControlProps,
   };
 };
 
@@ -317,7 +355,7 @@ export const createOption = <T>(
         return state.disabledKeys.has(props.key);
       },
       onPress() {
-        state.selectionManager.toggleSelection(props.key);
+        state.selectionManager.select(props.key);
       },
     },
     ref

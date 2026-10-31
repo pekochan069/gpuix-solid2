@@ -466,7 +466,7 @@
     },
     "createSelect": {
       "source": "select/create-select",
-      "status": "deferred"
+      "status": "native-subset"
     },
     "ListKeyboardDelegate": {
       "source": "selection/list-keyboard-delegate",

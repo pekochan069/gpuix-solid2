@@ -72,6 +72,13 @@ names, direct labels, and mouse, keyboard, and OS Click activation only.
 Original copyright and derivation notices ship in source, JavaScript,
 and declarations. See LICENSES/Apache-2.0.txt.
 
+src/select.ts derives from Solid Aria's select/create-select.ts,
+based on Adobe React Spectrum's useSelect.ts (Copyright 2020 Adobe).
+Modifications for GPUIX: native trigger and listbox composition, direct
+labels, normalized keys, and single-character search. Original copyright
+and derivation notices ship in source, JavaScript, and declarations.
+See LICENSES/Apache-2.0.txt.
+
 The upstream notice and original React Spectrum notice are preserved
 verbatim in LICENSES/solid2-aria-NOTICE.txt and
 LICENSES/react-spectrum-NOTICE.txt. The MIT text is in LICENSE.
