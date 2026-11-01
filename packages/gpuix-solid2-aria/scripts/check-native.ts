@@ -159,6 +159,8 @@ try {
       "select",
       "tooltip",
       "toolbar",
+      "link",
+      "breadcrumbs",
     ].map(async (name) => {
       const original = await readFile(
         path.join(root, `src/${name}.ts`),

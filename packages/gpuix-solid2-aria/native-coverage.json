@@ -22,11 +22,11 @@
     },
     "createBreadcrumbItem": {
       "source": "breadcrumbs/create-breadcrumb-item",
-      "status": "deferred"
+      "status": "native-subset"
     },
     "createBreadcrumbs": {
       "source": "breadcrumbs/create-breadcrumbs",
-      "status": "deferred"
+      "status": "native-subset"
     },
     "createButton": {
       "source": "button/create-button",
@@ -338,7 +338,7 @@
     },
     "createLink": {
       "source": "link/create-link",
-      "status": "deferred"
+      "status": "native-subset"
     },
     "createListBox": {
       "source": "listbox/create-list-box",

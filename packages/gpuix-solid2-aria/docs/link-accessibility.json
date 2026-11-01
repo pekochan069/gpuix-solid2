@@ -1,0 +1,24 @@
+{
+  "platform": "Linux WSL2 Xvfb X11, GPUIX 0.11.0, AT-SPI",
+  "roles_and_names": {
+    "Breadcrumbs": {
+      "role": 110
+    },
+    "Home": {
+      "role": 88
+    },
+    "Unavailable": {
+      "role": 88
+    },
+    "Current page": {
+      "role": 88
+    }
+  },
+  "navigation_description": "Links to parent pages. Current page is inactive.",
+  "current_states": [1124075776, 0],
+  "current_attributes": [],
+  "disabled_states": [1124075776, 0],
+  "current_relationships": [],
+  "os_click_invokes_navigation_callback": true,
+  "disabled_and_current_os_click_are_ignored": true
+}

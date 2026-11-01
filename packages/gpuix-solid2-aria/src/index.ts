@@ -5,6 +5,10 @@ export * from "./interactions.js";
 
 export * from "./controls.js";
 
+export * from "./link.js";
+
+export * from "./breadcrumbs.js";
+
 export * from "./search-field.js";
 
 export * from "./number-field.js";
