@@ -21,6 +21,7 @@ import {
   createTabPanel,
   createToggleButtonGroup,
   createToggleButtonGroupItem,
+  createToolbar,
   createTooltip,
   createTooltipTrigger,
 } from "gpuix-solid2-aria";
@@ -70,6 +71,8 @@ let selectValue!: () => string | number | null;
 let menuActions = 0;
 let tooltipTrigger!: HostElement;
 let tooltipContent!: HostElement;
+let toolbarNode!: HostElement;
+let toolbarItem!: HostElement;
 const tabNodes = new Map<number, HostElement>();
 let selected = () => false;
 let count = 0;
@@ -80,6 +83,20 @@ const app = createRoot(renderer);
 try {
   app.render(() => {
     const state = createToggleState();
+
+    const toolbar = createToolbar(
+      { "aria-label": "Commands" },
+      () => toolbarNode
+    );
+
+    const toolbarButton = createButton(
+      {
+        onPress: () => {
+          count += 1;
+        },
+      },
+      () => toolbarItem
+    );
 
     const tooltipState = createTooltipTriggerState({ delay: 0 });
 
@@ -229,6 +246,25 @@ try {
     const clear = createButton(search.clearButtonProps, () => clearSearch);
 
     return [
+      jsx(
+        "div",
+        merge(toolbar.toolbarProps, {
+          children: jsx(
+            "div",
+            merge(
+              toolbar.createItem(toolbarButton.buttonProps, () => toolbarItem),
+              {
+                ref(node: HostElement) {
+                  toolbarItem = node;
+                },
+              }
+            )
+          ),
+          ref(node: HostElement) {
+            toolbarNode = node;
+          },
+        })
+      ),
       jsx(
         "div",
         merge(tooltipTriggerBehavior.triggerProps, {
@@ -543,6 +579,10 @@ try {
   });
   app.dispatch({ elementId: clearSearch.id, eventType: "click" });
   assert.equal(searchInput.props.get("value"), "");
+  assert.equal(toolbarNode.props.get("role"), "toolbar");
+  assert.equal(toolbarItem.props.get("tabIndex"), 0);
+  app.dispatch({ elementId: toolbarItem.id, eventType: "click" });
+  assert.equal(count, 2);
   console.log(
     "Compiled native consumer passed without browser globals, @solidjs/web, or upstream SSR."
   );

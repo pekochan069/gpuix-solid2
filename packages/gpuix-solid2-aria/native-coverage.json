@@ -562,7 +562,7 @@
     },
     "createToolbar": {
       "source": "toolbar/create-toolbar",
-      "status": "deferred"
+      "status": "native-subset"
     },
     "createTooltip": {
       "source": "tooltip/create-tooltip",

@@ -1,6 +1,6 @@
 # gpuix-solid2-aria
 
-Native interaction behaviors for the Solid 2 GPUIX renderer. This is the native behavior subset of [issue #2](https://github.com/pekochan069/gpuix-solid2/issues/2). It covers buttons, disclosures, tabs, toggles, toggle button groups, checkboxes, checkbox groups, switches, radio groups, text, search and number fields, menus, selects, tooltips, linear listboxes, focus, and overlay foundations. It does not provide full `@solid2-aria/core` parity or complete native accessibility. See [coverage and platform gaps](PORTING.md).
+Native interaction behaviors for the Solid 2 GPUIX renderer. This is the native behavior subset of [issue #2](https://github.com/pekochan069/gpuix-solid2/issues/2). It covers buttons, disclosures, tabs, toggles, toggle button groups, toolbars, checkboxes, checkbox groups, switches, radio groups, text, search and number fields, menus, selects, tooltips, linear listboxes, focus, and overlay foundations. It does not provide full `@solid2-aria/core` parity or complete native accessibility. See [coverage and platform gaps](PORTING.md).
 
 ## Render a native checkbox
 
@@ -45,6 +45,25 @@ Set `jsxImportSource` to `gpuix-solid2`. Use a native `div` for a checkbox surfa
 Behavior props use reactive property getters. Keep the returned object intact; destructuring a state getter takes a snapshot. Compose callbacks explicitly when behaviors handle the same event. Solid's `merge` overwrites a duplicate handler; it does not chain handlers.
 
 `createButton`, `createToggleButton`, `createCheckbox`, `createSwitch`, and `createPress` take a `() => HostElement | null` ref. `createToggleButton`, `createCheckbox`, and `createSwitch` also take `ToggleState` from `gpuix-solid2-stately`. `createTextField` returns native editor `inputProps` and `value`. Controlled inputs report change requests. Rejected edits require a native editor reset contract that GPUIX 0.11.0 does not expose; see the porting audit before using this pattern for input validation.
+
+## Toolbars
+
+Use `createToolbar(props, toolbarRef)` from `gpuix-solid2-aria/toolbar`. Spread `toolbarProps` onto the container. Register each control with `toolbar.createItem(controlProps, controlRef)` in that control's Solid owner, then spread the returned props onto the control. For example:
+
+```ts
+const toolbar = createToolbar({ "aria-label": "Editing" }, () => container);
+const button = createButton(
+  { "aria-label": "Copy", onPress: copy },
+  () => element
+);
+const itemProps = toolbar.createItem(button.buttonProps, () => element);
+```
+
+Registration composes the control's focus and keyboard handlers and preserves its role, actions, and state. Arrow keys move through enabled registered controls in native tree order without wrapping or activating them. Horizontal navigation respects locale direction. Vertical navigation uses Up and Down. Keys already consumed by a control stay with that control.
+
+The toolbar has one remembered Tab stop. Tab and Shift+Tab leave the toolbar, and returning restores the last enabled control. Disabling or unmounting that control falls back to the first enabled item. Disabled controls must supply reactive `aria-disabled`, as `createButton` does. Keep each registration in the same owner as its control so removal unregisters it.
+
+Unregistered focusable descendants, nested toolbars, and composite groups remain deferred. Native accessibility exposes the toolbar role and direct text; orientation, pressed state, disabled state, and label relationships remain backend gaps. See the [Toolbar evidence](PORTING.md#toolbar-stage).
 
 ## Selects
 
