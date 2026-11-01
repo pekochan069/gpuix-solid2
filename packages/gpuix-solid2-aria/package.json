@@ -45,6 +45,7 @@
     "test:native:menu-trigger": "bun --preload gpuix-solid2/preload fixtures/menu-trigger-native.ts",
     "test:native:select": "bun --preload gpuix-solid2/preload fixtures/select-native.ts",
     "test:native:tooltip": "bun --preload gpuix-solid2/preload fixtures/tooltip-native.ts",
+    "test:native:toolbar": "bun --preload gpuix-solid2/preload fixtures/toolbar-native.ts",
     "prepack": "bun run build"
   },
   "dependencies": {

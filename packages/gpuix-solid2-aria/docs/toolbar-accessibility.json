@@ -1,0 +1,27 @@
+{
+  "platform": "Linux WSL2 WSLg X11, GPUIX 0.11.0, AT-SPI",
+  "roles_and_names": {
+    "Editing commands": {
+      "role": 63
+    },
+    "Copy": {
+      "role": 43
+    },
+    "Bold": {
+      "role": 43
+    },
+    "Unavailable": {
+      "role": 43
+    },
+    "Paste": {
+      "role": 43
+    }
+  },
+  "toolbar_description": "Arrow keys move between editing controls.",
+  "toolbar_states": [1124073728, 0],
+  "toolbar_relationships": [],
+  "bold_states": [1124075776, 0],
+  "disabled_states": [1124075776, 0],
+  "os_click_preserves_button_and_toggle_actions": true,
+  "disabled_os_click_is_ignored": true
+}
