@@ -566,11 +566,11 @@
     },
     "createTooltip": {
       "source": "tooltip/create-tooltip",
-      "status": "deferred"
+      "status": "native-subset"
     },
     "createTooltipTrigger": {
       "source": "tooltip/create-tooltip-trigger",
-      "status": "deferred"
+      "status": "native-subset"
     },
     "createTree": {
       "source": "tree/create-tree",

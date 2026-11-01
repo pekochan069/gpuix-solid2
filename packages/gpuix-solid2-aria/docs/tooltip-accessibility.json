@@ -1,0 +1,25 @@
+{
+  "platform": "Linux WSL2 WSLg X11, GPUIX 0.11.0, AT-SPI",
+  "roles_and_names": {
+    "Save": {
+      "role": 43
+    },
+    "Focus only": {
+      "role": 43
+    },
+    "Help disabled": {
+      "role": 43
+    },
+    "Save help": {
+      "role": 64
+    }
+  },
+  "tooltip_description": "Keyboard focus or hover shows this description.",
+  "tooltip_states": [1124073728, 0],
+  "os_click_dismisses_and_unmounts": true,
+  "os_click_preserves_trigger_action": true,
+  "disabled_help_preserves_button_action": true,
+  "fixture_control_reopens_content": true,
+  "trigger_relationships": [],
+  "tooltip_relationships": []
+}
