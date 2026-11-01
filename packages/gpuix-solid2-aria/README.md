@@ -1,6 +1,6 @@
 # gpuix-solid2-aria
 
-Native interaction behaviors for the Solid 2 GPUIX renderer. This is the native behavior subset of [issue #2](https://github.com/pekochan069/gpuix-solid2/issues/2). It covers buttons, disclosures, tabs, toggles, toggle button groups, checkboxes, checkbox groups, switches, radio groups, text, search and number fields, menus, selects, linear listboxes, focus, and overlay foundations. It does not provide full `@solid2-aria/core` parity or complete native accessibility. See [coverage and platform gaps](PORTING.md).
+Native interaction behaviors for the Solid 2 GPUIX renderer. This is the native behavior subset of [issue #2](https://github.com/pekochan069/gpuix-solid2/issues/2). It covers buttons, disclosures, tabs, toggles, toggle button groups, checkboxes, checkbox groups, switches, radio groups, text, search and number fields, menus, selects, tooltips, linear listboxes, focus, and overlay foundations. It does not provide full `@solid2-aria/core` parity or complete native accessibility. See [coverage and platform gaps](PORTING.md).
 
 ## Render a native checkbox
 
@@ -57,6 +57,18 @@ Enter, Space, Up, Down, and Alt with Up or Down open on key-down. Opening focuse
 While a single select is closed, Left and Right request the previous and next enabled values without wrapping. Single characters search the collection using the configured locale. Multiple selects leave these closed-trigger keys alone. Disabled triggers leave Tab order and reject input; disabled collection keys are skipped. The behavior exposes state validation results and semantic required and invalid props.
 
 Forms, hidden selects, group focus-within callbacks, DOM label and error lookup, hover selection, drag-across activation, multi-character search, sections, links, virtualization, and component wrappers remain deferred. See the [Select contract and native evidence](PORTING.md#select-stage) for observed OS support and remaining backend gaps.
+
+## Tooltips
+
+Use `createTooltipTrigger(props, state, triggerRef)` from `gpuix-solid2-aria/tooltip` with `createTooltipTriggerState` from `gpuix-solid2-stately`. Create state and behavior in the same owner. State owns `delay`, `closeDelay`, controlled `isOpen` requests, and the shared warmup policy. The behavior owns `trigger`, `shouldCloseOnPress`, and its reactive `isDisabled` guard. Pass a shared disabled flag to both state and behavior when disabling help.
+
+Compose `triggerProps` with the trigger's existing behavior and explicitly chain shared handlers. The tooltip supplies no role or Tab stop for its trigger. With `createButton`, chain `onFocus`, `onBlur`, `onKeyDown`, `onMouseDown`, `onMouseLeave`, `onMouseUp`, and `onClick`; the [native fixture](fixtures/tooltip-native.ts) shows the complete composition. Disabling help leaves the underlying button enabled unless you disable that button separately.
+
+While `state.isOpen`, mount `createTooltip(trigger.tooltipProps, state)` on noninteractive native content. Add direct labels or descriptions through its props. Mounting and unmounting the content keeps closed tooltips out of the native tree. Use `createOverlayPosition` and a native `anchored` element for placement. The trigger behavior joins the native Escape stack without moving or restoring focus; it does not need `createOverlay`.
+
+Keyboard focus opens immediately, while pointer focus does not. Hover uses the state's delay; moving onto the tooltip keeps it open. Real pointer movement can reopen help after keyboard dismissal, while layout-only hover entry cannot. `trigger: "focus"` ignores trigger hover. Blur closes immediately. Key-down, mouse-down, and OS Click close by default; `shouldCloseOnPress: false` keeps help on press. Otherwise, hover cannot reopen help until mouse release. Escape still closes, including a hovered tooltip when focus is elsewhere, and dismisses the tooltip before an existing overlay.
+
+The pinned backend exposes tooltip roles and direct text but omits `aria-describedby` relationships. Supply essential help directly with the trigger's `aria-description` when it must reach assistive technology. Touch, pen, interactive tooltip content, live announcements, and component wrappers remain deferred. See the [Tooltip contract and evidence](PORTING.md#tooltip-stage).
 
 ## Search fields
 

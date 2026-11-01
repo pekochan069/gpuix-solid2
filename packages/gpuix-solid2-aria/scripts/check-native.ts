@@ -157,6 +157,7 @@ try {
       "menu",
       "menu-trigger",
       "select",
+      "tooltip",
     ].map(async (name) => {
       const original = await readFile(
         path.join(root, `src/${name}.ts`),

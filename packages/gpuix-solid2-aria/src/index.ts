@@ -15,6 +15,8 @@ export * from "./menu-trigger.js";
 
 export * from "./select.js";
 
+export * from "./tooltip.js";
+
 export * from "./disclosure.js";
 
 export * from "./tabs.js";

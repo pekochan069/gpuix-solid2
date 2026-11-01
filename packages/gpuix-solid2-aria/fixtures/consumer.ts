@@ -21,6 +21,8 @@ import {
   createTabPanel,
   createToggleButtonGroup,
   createToggleButtonGroupItem,
+  createTooltip,
+  createTooltipTrigger,
 } from "gpuix-solid2-aria";
 import {
   createCheckboxGroupState,
@@ -33,10 +35,11 @@ import {
   createToggleState,
   createToggleGroupState,
   createTreeState,
+  createTooltipTriggerState,
   Item,
 } from "gpuix-solid2-stately";
 import { jsx } from "gpuix-solid2/jsx-runtime";
-import { merge } from "solid-js";
+import { For, merge } from "solid-js";
 
 for (const name of ["window", "document", "navigator", "HTMLElement"]) {
   Reflect.deleteProperty(globalThis, name);
@@ -65,6 +68,8 @@ let menuTrigger!: HostElement;
 let selectTrigger!: HostElement;
 let selectValue!: () => string | number | null;
 let menuActions = 0;
+let tooltipTrigger!: HostElement;
+let tooltipContent!: HostElement;
 const tabNodes = new Map<number, HostElement>();
 let selected = () => false;
 let count = 0;
@@ -75,6 +80,14 @@ const app = createRoot(renderer);
 try {
   app.render(() => {
     const state = createToggleState();
+
+    const tooltipState = createTooltipTriggerState({ delay: 0 });
+
+    const tooltipTriggerBehavior = createTooltipTrigger(
+      {},
+      tooltipState,
+      () => tooltipTrigger
+    );
 
     const selectState = createSelectState({
       children: (entry: { id: number }) =>
@@ -216,6 +229,37 @@ try {
     const clear = createButton(search.clearButtonProps, () => clearSearch);
 
     return [
+      jsx(
+        "div",
+        merge(tooltipTriggerBehavior.triggerProps, {
+          ref: (node: HostElement) => {
+            tooltipTrigger = node;
+          },
+          tabIndex: 0,
+        })
+      ),
+      For({
+        children: () =>
+          jsx(
+            "div",
+            merge(
+              createTooltip(
+                merge(tooltipTriggerBehavior.tooltipProps, {
+                  "aria-label": "Native tooltip",
+                }),
+                tooltipState
+              ).tooltipProps,
+              {
+                ref: (node: HostElement) => {
+                  tooltipContent = node;
+                },
+              }
+            )
+          ),
+        get each() {
+          return tooltipState.isOpen ? [true] : [];
+        },
+      }),
       jsx(
         "div",
         merge(select.triggerProps, {
@@ -376,6 +420,20 @@ try {
     ];
   });
   assert.equal(menuTrigger.props.get("aria-expanded"), false);
+  app.dispatch({ elementId: tooltipTrigger.id, eventType: "focus" });
+  assert.equal(tooltipContent.mounted, true);
+  assert.equal(tooltipContent.props.get("role"), "tooltip");
+  assert.equal(tooltipContent.props.get("aria-label"), "Native tooltip");
+  assert.equal(
+    tooltipTrigger.props.get("aria-describedby"),
+    tooltipContent.props.get("aria-id")
+  );
+  app.dispatch({
+    elementId: tooltipTrigger.id,
+    eventType: "keyDown",
+    key: "escape",
+  });
+  assert.equal(tooltipContent.mounted, false);
   app.dispatch({ elementId: menuTrigger.id, eventType: "keyDown", key: "up" });
   assert.equal(menuTrigger.props.get("aria-expanded"), true);
   assert.equal(menuTrigger.props.get("aria-haspopup"), "menu");
