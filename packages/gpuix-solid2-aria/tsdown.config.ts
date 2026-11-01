@@ -17,6 +17,8 @@ const notices = new Map(
     "select",
     "tooltip",
     "toolbar",
+    "link",
+    "breadcrumbs",
   ].map((name) => [
     name,
     readFileSync(new URL(`src/${name}.ts`, import.meta.url), "utf-8").split(

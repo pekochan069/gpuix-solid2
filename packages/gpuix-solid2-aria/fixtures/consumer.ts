@@ -4,6 +4,9 @@ import { createRoot } from "gpuix-solid2";
 import type { HostElement, NativeRenderer } from "gpuix-solid2";
 import {
   createButton,
+  createBreadcrumbs,
+  createBreadcrumbItem,
+  createLink,
   createCheckbox,
   createCheckboxGroup,
   createCheckboxGroupItem,
@@ -73,6 +76,9 @@ let tooltipTrigger!: HostElement;
 let tooltipContent!: HostElement;
 let toolbarNode!: HostElement;
 let toolbarItem!: HostElement;
+let linkNode!: HostElement;
+let currentBreadcrumb!: HostElement;
+let navigations = 0;
 const tabNodes = new Map<number, HostElement>();
 let selected = () => false;
 let count = 0;
@@ -83,6 +89,25 @@ const app = createRoot(renderer);
 try {
   app.render(() => {
     const state = createToggleState();
+
+    const link = createLink(
+      {
+        onPress: () => {
+          navigations += 1;
+        },
+      },
+      () => linkNode
+    );
+
+    const breadcrumb = createBreadcrumbItem(
+      {
+        isCurrent: true,
+        onPress: () => {
+          navigations += 1;
+        },
+      },
+      () => currentBreadcrumb
+    );
 
     const toolbar = createToolbar(
       { "aria-label": "Commands" },
@@ -246,6 +271,29 @@ try {
     const clear = createButton(search.clearButtonProps, () => clearSearch);
 
     return [
+      jsx(
+        "div",
+        merge(createBreadcrumbs({ "aria-label": "Pages" }).navProps, {
+          children: [
+            jsx(
+              "div",
+              merge(link.linkProps, {
+                ref(node: HostElement) {
+                  linkNode = node;
+                },
+              })
+            ),
+            jsx(
+              "div",
+              merge(breadcrumb.itemProps, {
+                ref(node: HostElement) {
+                  currentBreadcrumb = node;
+                },
+              })
+            ),
+          ],
+        })
+      ),
       jsx(
         "div",
         merge(toolbar.toolbarProps, {
@@ -583,6 +631,16 @@ try {
   assert.equal(toolbarItem.props.get("tabIndex"), 0);
   app.dispatch({ elementId: toolbarItem.id, eventType: "click" });
   assert.equal(count, 2);
+  assert.equal(linkNode.props.get("role"), "link");
+  app.dispatch({ elementId: linkNode.id, eventType: "keyDown", key: "space" });
+  app.dispatch({ elementId: linkNode.id, eventType: "keyUp", key: "space" });
+  assert.equal(navigations, 0);
+  app.dispatch({ elementId: linkNode.id, eventType: "keyDown", key: "enter" });
+  app.dispatch({ elementId: linkNode.id, eventType: "keyUp", key: "enter" });
+  app.dispatch({ elementId: currentBreadcrumb.id, eventType: "click" });
+  assert.equal(navigations, 1);
+  assert.equal(currentBreadcrumb.props.get("aria-current"), "page");
+  assert.equal(currentBreadcrumb.props.get("tabIndex"), -1);
   console.log(
     "Compiled native consumer passed without browser globals, @solidjs/web, or upstream SSR."
   );
